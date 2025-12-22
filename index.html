@@ -1091,6 +1091,8 @@
       state.recipient = recipient;
 
       recipientEl.textContent = recipient;
+      const amountWordsEl = document.getElementById("amountWords");
+if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
       quipEl.textContent = pickRandomQuip();
 
       // Count up animation
@@ -1153,6 +1155,8 @@
       const rounded = roundToNearest10(randomized);
       const finalVal = clamp(rounded, 200, 1200);
       state.result = finalVal;
+      const amountWordsEl = document.getElementById("amountWords");
+if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
 
       quipEl.textContent = pickRandomQuip();
       // Re-animate amount from current displayed to new value
