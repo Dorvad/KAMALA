@@ -6,10 +6,13 @@
   <meta name="theme-color" content="#0b1220" />
   <title>KamaLasim — כמה לשים</title>
 
-  <!-- Modern Hebrew font -->
+  <!-- Modern Hebrew UI font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <!-- “Handwritten-ish” feel: we simulate with styling (Hebrew handwriting fonts are rare on Google Fonts) -->
+  <!-- You can later swap to any Hebrew handwriting font if you have one. -->
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
@@ -22,7 +25,6 @@
     :root{
       --bg:#070b14;
       --card:#0b1220;
-      --card2:#0e1730;
       --text:#e9eeff;
       --muted:#a9b5d6;
       --accent:#7c5cff;
@@ -30,8 +32,12 @@
       --danger:#fb7185;
       --line:rgba(255,255,255,.08);
       --shadow: 0 12px 40px rgba(0,0,0,.35);
-      --radius:18px;
-      --radius2:22px;
+
+      /* Cheque paper palette (photo-inspired) */
+      --paper1:#cfeff0;
+      --paper2:#bfe6e8;
+      --ink:#0a2a66;     /* “pen blue” */
+      --paperLine: rgba(11,42,46,.35);
     }
 
     *{ box-sizing:border-box; }
@@ -62,21 +68,9 @@
       margin-top: 6px;
     }
 
-    .brand{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    .brand h1{
-      margin:0;
-      font-size: 26px;
-      letter-spacing: .2px;
-      line-height: 1.15;
-    }
-    .brand p{
-      margin:0;
-      color:var(--muted);
-      font-size: 14px;
-      line-height:1.35;
-    }
+    .brand{ display:flex; flex-direction:column; gap:2px; }
+    .brand h1{ margin:0; font-size: 26px; letter-spacing: .2px; line-height: 1.15; }
+    .brand p{ margin:0; color:var(--muted); font-size: 14px; line-height:1.35; }
 
     .chip{
       display:inline-flex;
@@ -103,23 +97,15 @@
     .progress{
       margin: 14px 0 10px;
       padding: 12px;
-      border-radius: var(--radius);
+      border-radius: 18px;
       background: rgba(255,255,255,.03);
       border:1px solid var(--line);
     }
-    .progressRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-    }
+    .progressRow{ display:flex; gap:10px; align-items:center; justify-content:space-between; }
     .seg{
-      flex:1;
-      height: 8px;
-      border-radius: 999px;
+      flex:1; height: 8px; border-radius: 999px;
       background: rgba(255,255,255,.06);
-      overflow:hidden;
-      position:relative;
+      overflow:hidden; position:relative;
     }
     .seg > i{
       position:absolute; inset:0;
@@ -129,6 +115,7 @@
       transition: transform .5s cubic-bezier(.2,.9,.2,1);
     }
     .seg.done > i{ transform: translateX(0); }
+
     .progressMeta{
       display:flex; align-items:center; justify-content:space-between;
       margin-top: 10px;
@@ -140,7 +127,7 @@
     .stepCard{
       background: rgba(255,255,255,.03);
       border: 1px solid var(--line);
-      border-radius: var(--radius2);
+      border-radius: 22px;
       box-shadow: var(--shadow);
       padding: 14px;
       margin: 10px 0;
@@ -152,21 +139,10 @@
       gap:10px;
       margin-bottom: 10px;
     }
-    .stepTitle h2{
-      margin:0;
-      font-size: 16px;
-      letter-spacing:.2px;
-    }
-    .stepTitle small{
-      color: var(--muted);
-      font-weight:600;
-    }
+    .stepTitle h2{ margin:0; font-size: 16px; letter-spacing:.2px; }
+    .stepTitle small{ color: var(--muted); font-weight:600; }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .option{
       border: 1px solid var(--line);
@@ -174,7 +150,7 @@
       border-radius: 16px;
       padding: 12px 12px;
       text-align:center;
-      font-weight:700;
+      font-weight:800;
       font-size: 14px;
       color: var(--text);
       user-select:none;
@@ -197,21 +173,9 @@
       0%{ transform: scale(.98); }
       100%{ transform: scale(1); }
     }
-    .option.selected::after{
-      content:"";
-      position:absolute; inset:auto -40% -50% -40%;
-      height: 120px;
-      background: radial-gradient(circle at 50% 0%, rgba(124,92,255,.35), transparent 60%);
-      transform: rotate(8deg);
-    }
 
     /* Bottom action bar */
-    .bar{
-      position: sticky;
-      bottom: 10px;
-      z-index: 5;
-      margin-top: 14px;
-    }
+    .bar{ position: sticky; bottom: 10px; z-index: 5; margin-top: 14px; }
     .barInner{
       border-radius: 18px;
       border: 1px solid var(--line);
@@ -224,26 +188,15 @@
       align-items:center;
       justify-content:space-between;
     }
-    .preview{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width: 0;
-    }
+    .preview{ display:flex; flex-direction:column; gap:2px; min-width: 0; }
     .preview .label{ color: var(--muted); font-size: 12px; }
-    .preview .value{
-      font-weight:800;
-      font-size: 18px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
+    .preview .value{ font-weight:900; font-size: 18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
     .btn{
       border:0;
       border-radius: 14px;
       padding: 12px 14px;
-      font-weight:800;
+      font-weight:900;
       font-size: 14px;
       cursor:pointer;
       color: #081021;
@@ -254,18 +207,18 @@
       white-space:nowrap;
     }
     .btn:active{ transform: scale(.98); }
-    .btn[disabled]{
-      opacity:.45;
-      cursor:not-allowed;
-      filter:saturate(.5);
-      box-shadow:none;
-    }
+    .btn[disabled]{ opacity:.45; cursor:not-allowed; filter:saturate(.5); box-shadow:none; }
     .btn.secondary{
       background: rgba(255,255,255,.08);
       color: var(--text);
       box-shadow:none;
       border:1px solid var(--line);
-      font-weight:700;
+      font-weight:800;
+    }
+    .btn.danger{
+      background: linear-gradient(180deg, rgba(251,113,133,1), rgba(251,113,133,.78));
+      box-shadow: 0 12px 30px rgba(251,113,133,.22);
+      color:#17060a;
     }
 
     /* Result modal */
@@ -304,11 +257,7 @@
       justify-content:space-between;
       border-bottom:1px solid var(--line);
     }
-    .sheetHeader .title{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
+    .sheetHeader .title{ display:flex; flex-direction:column; gap:2px; }
     .sheetHeader .title b{ font-size: 16px; }
     .sheetHeader .title span{ color: var(--muted); font-size: 12px; }
 
@@ -324,22 +273,20 @@
     }
     .close:active{ transform: scale(.98); }
 
-    /* Check card */
-    .checkWrap{
-      padding: 14px;
-    }
+    .checkWrap{ padding: 14px; }
 
-    .check{
+    /* ====== ISRAELI CHEQUE (photo-inspired) ====== */
+    .check.ilCheque{
       position:relative;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        radial-gradient(900px 260px at 40% 0%, rgba(124,92,255,.18), transparent 55%);
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.16);
+      background: linear-gradient(180deg, var(--paper1), var(--paper2));
+      color: #0b2a2e;
+      box-shadow: 0 18px 60px rgba(0,0,0,.40);
       overflow:hidden;
-      padding: 16px;
-      transform: translateY(20px);
+
+      /* Print-in animation */
+      transform: translateY(18px);
       opacity: 0;
       animation: printIn .45s cubic-bezier(.2,.9,.2,1) forwards;
     }
@@ -347,108 +294,243 @@
       to{ transform: translateY(0); opacity:1; }
     }
 
-    .check::before{
-      content:"";
+    .ilWatermark{
       position:absolute;
-      inset:-40px -60px auto -60px;
-      height: 120px;
-      background: radial-gradient(circle at 50% 40%, rgba(52,211,153,.18), transparent 60%);
-      transform: rotate(-6deg);
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.35), transparent 55%),
+        radial-gradient(circle at 80% 40%, rgba(255,255,255,.22), transparent 60%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,.02) 0 2px, transparent 2px 10px);
+      opacity:.6;
+      pointer-events:none;
     }
 
-    .checkTop{
+    .ilContent{ position:relative; z-index:1; padding: 12px 12px 0; }
+
+    .ilTop{
       display:flex;
-      justify-content:space-between;
       align-items:flex-start;
-      gap:10px;
-      margin-bottom: 10px;
-      position:relative;
-      z-index:1;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 12px 6px;
     }
-    .checkMark{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      color: var(--muted);
+    .ilBankTitle{ font-weight:900; font-size: 18px; letter-spacing:.2px; }
+    .ilBankSub{ font-weight:800; font-size: 12px; opacity:.75; }
+    .ilOnlyStamp{
+      display:inline-block;
+      font-weight:900;
       font-size: 12px;
-      font-weight:700;
-    }
-    .checkMark i{
-      width: 10px; height: 10px;
+      padding: 6px 10px;
+      border: 2px solid rgba(11,42,46,.45);
       border-radius: 999px;
-      background: var(--accent2);
-      box-shadow: 0 0 0 5px rgba(52,211,153,.14);
+      background: rgba(255,255,255,.35);
     }
 
-    .checkBody{
-      position:relative;
-      z-index:1;
+    .ilBody{
+      padding: 0 12px 12px;
       display:flex;
       flex-direction:column;
-      gap: 10px;
-      padding-top: 6px;
+      gap: 12px;
     }
 
-    .row{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      border: 1px dashed rgba(255,255,255,.12);
-    }
-    .row span{
-      color: var(--muted);
-      font-weight:700;
-      font-size: 13px;
-    }
-    .row b{
-      font-size: 14px;
-      font-weight:800;
-    }
-
-    .amount{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap: 10px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      background: linear-gradient(180deg, rgba(124,92,255,.22), rgba(255,255,255,.03));
-      border: 1px solid rgba(124,92,255,.35);
-    }
-    .amount span{ color: rgba(233,238,255,.85); font-weight:800; font-size: 14px; }
-    .amount b{
-      font-size: 26px;
-      letter-spacing: .3px;
+    .ilRow{ display:flex; align-items:center; gap: 10px; }
+    .ilLabel{
       font-weight:900;
+      font-size: 11px;
+      opacity:.82;
+      white-space:nowrap;
+    }
+    .ilLabel.en{ direction:ltr; }
+    .ilLabel.he{ font-size: 12px; }
+    .ilLabel.heSmall{ font-size: 11px; opacity:.75; }
+
+    .ilLine{
+      flex:1;
+      min-width: 0;
+      border-bottom: 2px solid var(--paperLine);
+      padding: 6px 6px 7px;
     }
 
+    /* Handwriting look */
+    .hand{
+      color: var(--ink);
+      font-weight:900;
+      letter-spacing:.15px;
+      display:inline-block;
+      transform: rotate(-0.35deg);
+      text-shadow:
+        0.2px 0.2px 0 rgba(10,42,102,.10),
+        0.6px 0.6px 0 rgba(10,42,102,.06);
+    }
+    .hand.small{ font-size: 15px; }
+    .hand.big{ font-size: 20px; }
+
+    /* “Written by pen” animation
+       We reveal the text by sliding a cover from right->left and moving a small pen tip.
+       Works great for Hebrew RTL fields.
+    */
+    .write{
+      position:relative;
+      display:inline-block;
+      padding-inline: 2px;
+    }
+    .write::after{
+      content:"";
+      position:absolute;
+      inset:-2px -2px -2px -2px;
+      background: linear-gradient(180deg, var(--paper1), var(--paper2));
+      border-radius: 6px;
+      transform: translateX(0%);
+      opacity:1;
+      pointer-events:none;
+    }
+    .write::before{
+      content:"";
+      position:absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #0b2a2e;
+      box-shadow: 0 0 0 4px rgba(11,42,46,.12);
+      top: 55%;
+      transform: translate(0,-50%);
+      right: -2px;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    /* When writing starts */
+    .doWrite .write::after{
+      animation: revealInk 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    .doWrite .write::before{
+      opacity:1;
+      animation: penMove 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+
+    /* Stagger different fields */
+    .doWrite #w-recipient::after,
+    .doWrite #w-recipient::before{ animation-delay: 120ms; }
+    .doWrite #w-words::after,
+    .doWrite #w-words::before{ animation-delay: 320ms; }
+    .doWrite #w-amount::after,
+    .doWrite #w-amount::before{ animation-delay: 520ms; }
+
+    @keyframes revealInk{
+      from{ transform: translateX(0%); }
+      to{ transform: translateX(-110%); } /* move cover away to the LEFT */
+    }
+    @keyframes penMove{
+      from{ right: -2px; }
+      to{ right: calc(100% + 8px); } /* pen tip moves left across the text */
+    }
+
+    /* Amount box on the right (like photo) */
+    .ilWords{ align-items:flex-end; }
+    .ilAmountBox{
+      width: 170px;
+      border: 2px solid rgba(11,42,46,.45);
+      border-radius: 10px;
+      background: rgba(255,255,255,.35);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 8px 10px;
+      gap: 8px;
+      direction: rtl;
+    }
+    .ilAmountBoxLabel{ font-weight:900; font-size: 14px; opacity:.8; }
+    .ilAmountBoxValue{ font-size: 22px; }
+
+    /* Signature + Date */
+    .ilBottomRow{ justify-content:space-between; gap: 16px; }
+    .ilSig{ flex: 1.2; }
+    .ilSigLine{
+      height: 22px;
+      border-bottom: 3px solid rgba(11,42,46,.40);
+      margin: 6px 0 2px;
+    }
+
+    .ilDate{
+      flex: .9;
+      direction: ltr;
+      text-align:left;
+    }
+    .ilDateBoxes{
+      display:flex;
+      align-items:center;
+      gap: 6px;
+      margin: 6px 0 2px;
+    }
+    .ilDateBox{
+      border: 2px solid rgba(11,42,46,.35);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,.30);
+      font-weight:900;
+      font-size: 12px;
+      min-width: 94px;
+      text-align:center;
+      color: rgba(11,42,46,.85);
+    }
+
+    /* Approved stamp */
     .stamp{
       position:absolute;
-      left: 14px;
-      top: 54px;
-      transform: rotate(-14deg) scale(.7);
+      left: 16px;
+      top: 50%;
+      transform: rotate(-12deg) scale(.7);
       opacity: 0;
-      border: 3px solid rgba(251,113,133,.85);
-      color: rgba(251,113,133,.92);
+      border: 3px solid rgba(220,38,38,.85);
+      color: rgba(220,38,38,.92);
       padding: 8px 12px;
       border-radius: 10px;
       font-weight:900;
       letter-spacing: .8px;
-      text-transform: uppercase;
-      background: rgba(251,113,133,.08);
-      mix-blend-mode: screen;
-      animation: stamp .55s cubic-bezier(.2,.9,.2,1) .28s forwards;
+      background: rgba(220,38,38,.08);
+      mix-blend-mode: multiply;
+      animation: stamp 520ms cubic-bezier(.2,.9,.2,1) 680ms forwards;
+      z-index: 2;
     }
     @keyframes stamp{
-      0%{ opacity:0; transform: rotate(-14deg) scale(.6); }
-      55%{ opacity:1; transform: rotate(-14deg) scale(1.05); }
-      100%{ opacity:1; transform: rotate(-14deg) scale(1); }
+      0%{ opacity:0; transform: rotate(-12deg) scale(.55); }
+      60%{ opacity:1; transform: rotate(-12deg) scale(1.06); }
+      100%{ opacity:1; transform: rotate(-12deg) scale(1); }
     }
 
+    /* MICR strip */
+    .ilMicrStrip{
+      margin-top: 10px;
+      background: rgba(0,0,0,.08);
+      border-top: 1px solid rgba(0,0,0,.10);
+      padding: 10px 12px 12px;
+      border-radius: 0 0 12px 12px;
+    }
+    .ilMicrLabels{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      font-size: 10px;
+      font-weight:900;
+      opacity:.7;
+      direction:ltr;
+      color: rgba(0,0,0,.65);
+    }
+    .ilMicrLine{
+      margin-top: 6px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      direction:ltr;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-weight:900;
+      letter-spacing: 1.4px;
+      color: rgba(0,0,0,.78);
+    }
+    .ilMicrInk{ opacity:.65; }
+
+    /* Quip + actions */
     .quip{
       margin-top: 12px;
       padding: 12px 12px;
@@ -456,7 +538,7 @@
       border:1px solid var(--line);
       background: rgba(255,255,255,.03);
       color: rgba(233,238,255,.88);
-      font-weight:600;
+      font-weight:700;
       line-height:1.5;
     }
 
@@ -475,474 +557,13 @@
       align-items:center;
       gap:8px;
     }
-    .btn.danger{
-      background: linear-gradient(180deg, rgba(251,113,133,1), rgba(251,113,133,.78));
-      box-shadow: 0 12px 30px rgba(251,113,133,.22);
-      color:#17060a;
+
+    @media (max-width: 390px){
+      .ilAmountBox{ width: 150px; }
+      .ilAmountBoxValue{ font-size: 20px; }
+      .hand.big{ font-size: 18px; }
+      .ilDateBox{ min-width: 84px; }
     }
-
-    /* Accessibility */
-    .sr{
-      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-      overflow:hidden; clip:rect(0,0,0,0); border:0;
-    }
-    /* --- Israeli Check Visual Upgrade --- */
-.check.israeliCheck{
-  padding: 14px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
-    radial-gradient(900px 260px at 40% 0%, rgba(124,92,255,.16), transparent 55%);
-}
-
-.perforation{
-  position:absolute;
-  top: 0;
-  right: -10px;
-  width: 18px;
-  height: 100%;
-  background:
-    radial-gradient(circle, rgba(255,255,255,.18) 22%, transparent 24%) 0 10px / 18px 20px;
-  opacity:.55;
-  filter: blur(.1px);
-}
-
-.checkHeader{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap: 10px;
-  position:relative;
-  z-index:1;
-}
-
-.checkBrand{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  min-width: 0;
-}
-
-.bankLogo{
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  letter-spacing:.6px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 10px 26px rgba(0,0,0,.25);
-}
-
-.bankMeta{ min-width:0; }
-.bankName{
-  font-weight:900;
-  font-size: 14px;
-  letter-spacing:.2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.bankSub{
-  margin-top:2px;
-  color: rgba(233,238,255,.78);
-  font-weight:700;
-  font-size: 12px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.checkTopRight{
-  display:flex;
-  gap: 8px;
-  align-items:stretch;
-}
-
-.chequeNo, .dateBox{
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.04);
-  border-radius: 14px;
-  padding: 8px 10px;
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  min-width: 92px;
-  text-align:right;
-}
-
-.chequeNo span, .dateBox span{
-  color: rgba(233,238,255,.72);
-  font-weight:800;
-  font-size: 11px;
-}
-.chequeNo b, .dateBox b{
-  font-weight:900;
-  font-size: 13px;
-}
-
-.dividerLine{
-  height:1px;
-  background: rgba(255,255,255,.12);
-  margin: 12px 0;
-  position:relative;
-  z-index:1;
-}
-
-.checkMain{
-  position:relative;
-  z-index:1;
-  display:flex;
-  flex-direction:column;
-  gap: 10px;
-}
-
-.fieldLabel{
-  color: rgba(233,238,255,.75);
-  font-weight:900;
-  font-size: 12px;
-}
-
-.toRow{
-  display:grid;
-  grid-template-columns: 58px 1fr auto;
-  gap: 10px;
-  align-items:center;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.04);
-  border: 1px dashed rgba(255,255,255,.14);
-}
-
-.fieldValue{
-  font-weight:900;
-  font-size: 14px;
-}
-
-.onlyTo .pill{
-  font-size: 11px;
-  font-weight:900;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.04);
-  color: rgba(233,238,255,.82);
-  white-space:nowrap;
-}
-
-.amountRow{
-  display:grid;
-  grid-template-columns: 150px 1fr;
-  gap: 10px;
-  align-items:stretch;
-}
-
-.amountBox{
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(124,92,255,.22), rgba(255,255,255,.03));
-  border: 1px solid rgba(124,92,255,.35);
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.amountValue{
-  font-weight:1000;
-  font-size: 26px;
-  letter-spacing:.3px;
-}
-
-.amountWords{
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.04);
-  border: 1px dashed rgba(255,255,255,.14);
-  display:flex;
-  flex-direction:column;
-  gap: 6px;
-}
-
-.wordsLine{
-  height: 18px;
-  border-bottom: 2px solid rgba(255,255,255,.22);
-  font-weight:800;
-  color: rgba(233,238,255,.88);
-  padding-bottom: 6px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.signatureRow{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.sigField, .fromField{
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.04);
-  border: 1px dashed rgba(255,255,255,.14);
-  display:flex;
-  flex-direction:column;
-  gap: 8px;
-}
-
-.sigLine{
-  height: 20px;
-  border-bottom: 2px solid rgba(255,255,255,.22);
-}
-
-.fieldValueSmall{
-  font-weight:800;
-  color: rgba(233,238,255,.88);
-}
-
-.micr{
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.10);
-  display:flex;
-  justify-content:space-between;
-  gap: 10px;
-  align-items:center;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-weight:800;
-  letter-spacing: 1.2px;
-  color: rgba(233,238,255,.88);
-}
-
-.micrInk{
-  opacity:.7;
-}
-
-@media (max-width: 390px){
-  .amountRow{ grid-template-columns: 140px 1fr; }
-  .chequeNo, .dateBox{ min-width: 86px; }
-}
-    /* ===== Israeli cheque look (photo-inspired) ===== */
-
-.check.ilCheque{
-  position: relative;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.14);
-  background: linear-gradient(180deg, #cfeff0, #bfe6e8);
-  color: #0b2a2e;
-  box-shadow: 0 18px 60px rgba(0,0,0,.35);
-  overflow: hidden;
-  padding: 14px;
-  direction: rtl;
-}
-
-/* subtle paper texture / watermark */
-.ilWatermark{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.35), transparent 55%),
-    radial-gradient(circle at 80% 40%, rgba(255,255,255,.22), transparent 60%),
-    repeating-linear-gradient(45deg, rgba(0,0,0,.02) 0 2px, transparent 2px 10px);
-  opacity:.6;
-  pointer-events:none;
-}
-
-.ilTop{
-  position:relative;
-  z-index:1;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom: 10px;
-}
-
-.ilBankTitle{
-  font-weight:900;
-  font-size: 18px;
-  letter-spacing:.2px;
-}
-.ilBankSub{
-  font-weight:700;
-  font-size: 12px;
-  opacity:.75;
-}
-
-.ilOnlyStamp{
-  display:inline-block;
-  font-weight:900;
-  font-size: 12px;
-  padding: 6px 10px;
-  border: 2px solid rgba(11,42,46,.45);
-  border-radius: 999px;
-  background: rgba(255,255,255,.35);
-}
-
-/* rows */
-.ilBody{
-  position:relative;
-  z-index:1;
-  display:flex;
-  flex-direction:column;
-  gap: 12px;
-}
-
-.ilRow{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-}
-
-.ilLabel{
-  font-weight:900;
-  font-size: 11px;
-  opacity:.8;
-  white-space:nowrap;
-}
-.ilLabel.en{ direction:ltr; font-family: ui-sans-serif, system-ui; }
-.ilLabel.he{ font-size: 12px; }
-.ilLabel.heSmall{ font-size: 11px; opacity:.75; }
-
-.ilLine{
-  flex:1;
-  min-width: 0;
-  border-bottom: 2px solid rgba(11,42,46,.35);
-  padding: 6px 6px 7px;
-}
-
-/* handwriting feel */
-.ilHand{
-  font-weight:800;
-  font-size: 18px;
-  letter-spacing:.2px;
-  color:#0a2a66;
-}
-.ilHandSmall{
-  font-size: 15px;
-  opacity:.95;
-}
-
-/* amount box like the photo, on the right */
-.ilWords{
-  align-items:flex-end;
-}
-.ilAmountBox{
-  width: 170px;
-  border: 2px solid rgba(11,42,46,.45);
-  border-radius: 10px;
-  background: rgba(255,255,255,.35);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding: 8px 10px;
-  gap: 8px;
-}
-.ilAmountBoxLabel{
-  font-weight:900;
-  font-size: 14px;
-  opacity:.8;
-}
-.ilAmountBoxValue{
-  font-size: 22px;
-}
-
-/* signature + date */
-.ilBottomRow{
-  justify-content:space-between;
-  gap: 16px;
-}
-
-.ilSig{
-  flex: 1.2;
-}
-.ilSigLine{
-  height: 22px;
-  border-bottom: 3px solid rgba(11,42,46,.40);
-  margin: 6px 0 2px;
-}
-
-.ilDate{
-  flex: .9;
-  direction: ltr;
-  text-align:left;
-}
-.ilDateBoxes{
-  display:flex;
-  align-items:center;
-  gap: 6px;
-  margin: 6px 0 2px;
-}
-.ilDateBox{
-  border: 2px solid rgba(11,42,46,.35);
-  border-radius: 8px;
-  padding: 6px 8px;
-  background: rgba(255,255,255,.30);
-  font-weight:900;
-  font-size: 12px;
-  min-width: 70px;
-  text-align:center;
-}
-
-/* approved stamp */
-.ilApproveStamp{
-  position:absolute;
-  left: 16px;
-  top: 54%;
-  transform: rotate(-12deg) scale(.7);
-  opacity: 0;
-  border: 3px solid rgba(220,38,38,.85);
-  color: rgba(220,38,38,.92);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight:900;
-  letter-spacing: .8px;
-  background: rgba(220,38,38,.08);
-  animation: stamp .55s cubic-bezier(.2,.9,.2,1) .18s forwards;
-}
-
-/* micr strip */
-.ilMicrStrip{
-  margin-top: 14px;
-  background: rgba(0,0,0,.08);
-  border-top: 1px solid rgba(0,0,0,.10);
-  padding: 10px 12px 12px;
-  border-radius: 0 0 14px 14px;
-  position:relative;
-  z-index:1;
-}
-.ilMicrLabels{
-  display:flex;
-  justify-content:space-between;
-  gap: 10px;
-  font-size: 10px;
-  font-weight:900;
-  opacity:.7;
-  direction:ltr;
-}
-.ilMicrLine{
-  margin-top: 6px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap: 10px;
-  direction:ltr;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-weight:900;
-  letter-spacing: 1.4px;
-  color: rgba(0,0,0,.78);
-}
-.ilMicrInk{ opacity:.7; }
-
-/* mobile tweaks */
-@media (max-width: 390px){
-  .ilAmountBox{ width: 150px; }
-  .ilAmountBoxValue{ font-size: 20px; }
-  .ilHand{ font-size: 17px; }
-}
   </style>
 </head>
 
@@ -1005,77 +626,7 @@
       <div class="grid" id="attendeesOptions"></div>
     </section>
 
-    <!-- Bo<div class="check ilCheque" id="checkCard">
-  <div class="ilWatermark" aria-hidden="true"></div>
-
-  <div class="ilTop">
-    <div class="ilBank">
-      <div class="ilBankTitle">מדינת ישראל</div>
-      <div class="ilBankSub">מזרח התיכון • מדינת הצ׳ק</div>
-    </div>
-
-    <div class="ilOnly">
-      <span class="ilOnlyStamp">למוטב בלבד</span>
-    </div>
-  </div>
-
-  <div class="ilBody">
-    <!-- Pay to -->
-    <div class="ilRow ilPayTo">
-      <div class="ilLabel en">PAY TO</div>
-      <div class="ilLine">
-        <span class="ilHand" id="recipientText">—</span>
-      </div>
-      <div class="ilLabel he">שלמו ל</div>
-    </div>
-
-    <!-- Amount words -->
-    <div class="ilRow ilWords">
-      <div class="ilLabel heSmall">סכום במילים</div>
-      <div class="ilLine">
-        <span class="ilHand ilHandSmall" id="amountWords">—</span>
-      </div>
-      <div class="ilAmountBox">
-        <div class="ilAmountBoxLabel">₪</div>
-        <div class="ilAmountBoxValue ilHand" id="amountText">₪—</div>
-      </div>
-    </div>
-
-    <!-- Signature + Date -->
-    <div class="ilRow ilBottomRow">
-      <div class="ilSig">
-        <div class="ilLabel en">SIGNATURE</div>
-        <div class="ilSigLine"></div>
-        <div class="ilLabel heSmall">חתימה</div>
-      </div>
-
-      <div class="ilDate">
-        <div class="ilLabel en">DATE</div>
-        <div class="ilDateBoxes">
-          <div class="ilDateBox">/</div>
-          <div class="ilDateBox">/</div>
-          <div class="ilDateBox" id="checkDate">--/--/----</div>
-        </div>
-        <div class="ilLabel heSmall">תאריך</div>
-      </div>
-    </div>
-
-    <!-- Stamp -->
-    <div class="ilApproveStamp" id="stamp">מאושר</div>
-  </div>
-
-  <!-- MICR strip -->
-  <div class="ilMicrStrip">
-    <div class="ilMicrLabels">
-      <span>CHEQUE No.</span><span>BRANCH No.</span><span>ACCOUNT No.</span>
-    </div>
-    <div class="ilMicrLine">
-      <span class="ilMicrInk">⑆</span>
-      <span id="micrLine">00123   010   12345   4567890   9</span>
-      <span class="ilMicrInk">⑆</span>
-    </div>
-  </div>
-</div>ttom bar -->
+    <!-- Bottom bar -->
     <div class="bar" role="region" aria-label="Actions">
       <div class="barInner">
         <div class="preview">
@@ -1099,16 +650,77 @@
       </div>
 
       <div class="checkWrap">
-        <div class="check" id="checkCard">
-          <
-  </div>
+        <!-- CHEQUE CARD -->
+        <div class="check ilCheque" id="checkCard">
+          <div class="ilWatermark" aria-hidden="true"></div>
 
-  <div class="micr">
-    <span class="micrInk">⑆</span>
-    <span id="micrLine">00123  010  12345  4567890  9</span>
-    <span class="micrInk">⑆</span>
-  </div>
-</div>
+          <div class="ilTop">
+            <div class="ilBank">
+              <div class="ilBankTitle">מדינת ישראל</div>
+              <div class="ilBankSub">מדמה צ׳ק ישראלי (לכיף)</div>
+            </div>
+            <div class="ilOnly">
+              <span class="ilOnlyStamp">למוטב בלבד</span>
+            </div>
+          </div>
+
+          <div class="ilBody" id="chequeBody">
+            <!-- Pay to -->
+            <div class="ilRow ilPayTo">
+              <div class="ilLabel en">PAY TO</div>
+              <div class="ilLine">
+                <span class="hand big write" id="w-recipient"><span id="recipientText">—</span></span>
+              </div>
+              <div class="ilLabel he">שלמו ל</div>
+            </div>
+
+            <!-- Amount words + amount box -->
+            <div class="ilRow ilWords">
+              <div class="ilLabel heSmall">סכום במילים</div>
+              <div class="ilLine">
+                <span class="hand small write" id="w-words"><span id="amountWords">—</span></span>
+              </div>
+
+              <div class="ilAmountBox">
+                <div class="ilAmountBoxLabel">₪</div>
+                <div class="ilAmountBoxValue">
+                  <span class="hand big write" id="w-amount"><span id="amountText">₪—</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Signature + Date -->
+            <div class="ilRow ilBottomRow">
+              <div class="ilSig">
+                <div class="ilLabel en">SIGNATURE</div>
+                <div class="ilSigLine"></div>
+                <div class="ilLabel heSmall">חתימה</div>
+              </div>
+
+              <div class="ilDate">
+                <div class="ilLabel en">DATE</div>
+                <div class="ilDateBoxes">
+                  <div class="ilDateBox" id="checkDate">--/--/----</div>
+                </div>
+                <div class="ilLabel heSmall">תאריך</div>
+              </div>
+            </div>
+
+            <!-- Stamp -->
+            <div class="stamp" id="stamp">מאושר</div>
+          </div>
+
+          <!-- MICR strip -->
+          <div class="ilMicrStrip">
+            <div class="ilMicrLabels">
+              <span>CHEQUE No.</span><span>BRANCH No.</span><span>ACCOUNT No.</span>
+            </div>
+            <div class="ilMicrLine">
+              <span class="ilMicrInk">⑆</span>
+              <span id="micrLine">00123   010   12345   4567890   9</span>
+              <span class="ilMicrInk">⑆</span>
+            </div>
+          </div>
         </div>
 
         <div class="quip" id="quipText">—</div>
@@ -1230,7 +842,6 @@
       const ready = allSelected();
       document.getElementById("readyHint").textContent = ready ? "מוכן/ה לחשב 🎉" : "בחר/י כדי להתקדם";
 
-      // Live preview
       const preview = document.getElementById("previewValue");
       const calcBtn = document.getElementById("calcBtn");
       if (ready) {
@@ -1255,6 +866,11 @@
       document.getElementById("checkDate").textContent = `${dd}/${mm}/${yyyy}`;
     }
 
+    // pseudo “amount in words” (simple & playful)
+    function amountWords(n){
+      return `${n} ש״ח (בערך)`;
+    }
+
     // --- UI rendering for options ---
     function createOptions(containerId, options, stateKey) {
       const container = document.getElementById(containerId);
@@ -1269,11 +885,9 @@
         btn.addEventListener("click", () => {
           state[stateKey] = label;
 
-          // Mark selected within this group
           [...container.querySelectorAll(".option")].forEach(el => el.classList.remove("selected"));
           btn.classList.add("selected");
 
-          // Soft auto-scroll vibe: move user toward next step
           updateProgressUI();
           autoAdvanceScroll(stateKey);
         });
@@ -1298,18 +912,16 @@
     // --- Result overlay + animations ---
     const overlay = document.getElementById("overlay");
     const closeOverlayBtn = document.getElementById("closeOverlay");
-    const amountEl = document.getElementById("amountText");
     const recipientEl = document.getElementById("recipientText");
+    const amountEl = document.getElementById("amountText");
+    const amountWordsEl = document.getElementById("amountWords");
     const quipEl = document.getElementById("quipText");
     const stampEl = document.getElementById("stamp");
+    const chequeBody = document.getElementById("chequeBody");
 
     function openOverlay() {
       overlay.classList.add("show");
       overlay.setAttribute("aria-hidden", "false");
-      // Reset stamp animation by forcing reflow
-      stampEl.style.animation = "none";
-      void stampEl.offsetHeight;
-      stampEl.style.animation = "";
 
       setTodayDate();
 
@@ -1318,13 +930,26 @@
       state.result = result;
       state.recipient = recipient;
 
+      // Fill content
       recipientEl.textContent = recipient;
-      const amountWordsEl = document.getElementById("amountWords");
-if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
+      amountWordsEl.textContent = amountWords(result);
       quipEl.textContent = pickRandomQuip();
 
-      // Count up animation
+      // Restart stamp animation (forces reflow)
+      stampEl.style.animation = "none";
+      void stampEl.offsetHeight;
+      stampEl.style.animation = "";
+
+      // Restart “writing” animation:
+      chequeBody.classList.remove("doWrite");
+      void chequeBody.offsetHeight;
+      chequeBody.classList.add("doWrite");
+
+      // Animate amount counting up
       animateAmount(0, result, 520);
+
+      // Update MICR (purely visual)
+      randomizeMicr();
     }
 
     function closeOverlay() {
@@ -1333,9 +958,7 @@ if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
     }
 
     closeOverlayBtn.addEventListener("click", closeOverlay);
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeOverlay();
-    });
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeOverlay(); });
 
     function animateAmount(from, to, durationMs) {
       const start = performance.now();
@@ -1351,6 +974,15 @@ if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
       requestAnimationFrame(frame);
     }
 
+    function randomizeMicr(){
+      const chequeNo = String(Math.floor(10000 + Math.random() * 90000));
+      const bank = String(10 + Math.floor(Math.random() * 90)).padStart(3,"0");
+      const branch = String(100 + Math.floor(Math.random() * 900)).padStart(3,"0");
+      const account = String(1000000 + Math.floor(Math.random() * 9000000));
+      const control = String(Math.floor(Math.random() * 9));
+      document.getElementById("micrLine").textContent = `${chequeNo}   ${bank}   ${branch}   ${account}   ${control}`;
+    }
+
     // --- Buttons ---
     document.getElementById("calcBtn").addEventListener("click", () => {
       if (!allSelected()) return;
@@ -1358,7 +990,6 @@ if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
     });
 
     document.getElementById("recalcBtn").addEventListener("click", () => {
-      // Reset state
       state.closeness = null;
       state.eventType = null;
       state.location = null;
@@ -1366,7 +997,6 @@ if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
       state.result = null;
       state.recipient = null;
 
-      // Clear selections UI
       ["closenessOptions","eventOptions","locationOptions","attendeesOptions"].forEach(id => {
         document.getElementById(id).querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
       });
@@ -1383,13 +1013,18 @@ if (amountWordsEl) amountWordsEl.textContent = `${result} ש״ח (בערך)`;
       const rounded = roundToNearest10(randomized);
       const finalVal = clamp(rounded, 200, 1200);
       state.result = finalVal;
-      const amountWordsEl = document.getElementById("amountWords");
-if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
 
       quipEl.textContent = pickRandomQuip();
-      // Re-animate amount from current displayed to new value
+      amountWordsEl.textContent = amountWords(finalVal);
+
+      // restart writing + count-up from current
+      chequeBody.classList.remove("doWrite");
+      void chequeBody.offsetHeight;
+      chequeBody.classList.add("doWrite");
+
       const currentDisplayed = parseInt((amountEl.textContent || "₪0").replace("₪",""), 10) || 0;
       animateAmount(currentDisplayed, finalVal, 420);
+      randomizeMicr();
     });
 
     async function shareTextFallback() {
@@ -1398,7 +1033,7 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
         try {
           await navigator.share({ title: "KamaLasim", text });
           return true;
-        } catch (e) { /* user cancelled or not supported */ }
+        } catch (e) {}
       }
       try {
         await navigator.clipboard.writeText(text);
@@ -1411,7 +1046,6 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
     }
 
     async function shareAsImageIfPossible() {
-      // Try capturing the check card only
       const check = document.getElementById("checkCard");
       if (!window.html2canvas) return false;
 
@@ -1424,10 +1058,8 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
       return new Promise(async (resolve) => {
         canvas.toBlob(async (blob) => {
           if (!blob) return resolve(false);
-
           const file = new File([blob], "kamaslasim-check.png", { type: "image/png" });
 
-          // Web Share with files (if supported)
           if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
             try {
               await navigator.share({
@@ -1436,12 +1068,10 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
                 files: [file],
               });
               return resolve(true);
-            } catch (e) {
-              // fall through
-            }
+            } catch (e) {}
           }
 
-          // If file sharing isn't supported: download image
+          // fallback: download
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -1450,7 +1080,7 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
           a.click();
           a.remove();
           URL.revokeObjectURL(url);
-          alert("שמתי לך תמונה להורדה — אם אין שיתוף תמונות במכשיר, אפשר לשתף אותה ידנית 😊");
+          alert("שמתי לך תמונה להורדה — אם אין שיתוף תמונות במכשיר, אפשר לשתף אותה ידנית 🙂");
           resolve(true);
         }, "image/png");
       });
@@ -1458,13 +1088,10 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
 
     document.getElementById("shareBtn").addEventListener("click", async () => {
       if (state.result == null) return;
-
-      // Prefer image share; fallback to text
       try {
         const okImg = await shareAsImageIfPossible();
         if (okImg) return;
-      } catch (e) { /* ignore */ }
-
+      } catch (e) {}
       await shareTextFallback();
     });
 
@@ -1475,7 +1102,7 @@ if (amountWordsEl) amountWordsEl.textContent = `${finalVal} ש״ח (בערך)`;
     createOptions("attendeesOptions", Object.keys(ATTENDEES_MULT), "attendees");
     updateProgressUI();
 
-    // --- Register Service Worker ---
+    // --- Register Service Worker (optional; safe if file exists) ---
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
