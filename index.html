@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>KamaLasim — כמה לשים</title>
+
+  <!-- Modern Hebrew font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.png">
+
+  <!-- html2canvas for image sharing -->
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#070b14;
+      --card:#0b1220;
+      --card2:#0e1730;
+      --text:#e9eeff;
+      --muted:#a9b5d6;
+      --accent:#7c5cff;
+      --accent2:#34d399;
+      --danger:#fb7185;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 12px 40px rgba(0,0,0,.35);
+      --radius:18px;
+      --radius2:22px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Heebo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(900px 500px at 100% 10%, rgba(52,211,153,.20), transparent 55%),
+        radial-gradient(800px 500px at 0% 90%, rgba(251,113,133,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    }
+
+    .app{
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px 14px 24px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 6px;
+    }
+
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand h1{
+      margin:0;
+      font-size: 26px;
+      letter-spacing: .2px;
+      line-height: 1.15;
+    }
+    .brand p{
+      margin:0;
+      color:var(--muted);
+      font-size: 14px;
+      line-height:1.35;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      font-weight:600;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.18);
+    }
+
+    /* Progress */
+    .progress{
+      margin: 14px 0 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+    .progressRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .seg{
+      flex:1;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+      position:relative;
+    }
+    .seg > i{
+      position:absolute; inset:0;
+      transform: translateX(100%);
+      background: linear-gradient(90deg, rgba(124,92,255,.0), rgba(124,92,255,.85));
+      border-radius:999px;
+      transition: transform .5s cubic-bezier(.2,.9,.2,1);
+    }
+    .seg.done > i{ transform: translateX(0); }
+    .progressMeta{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Step cards */
+    .stepCard{
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin: 10px 0;
+    }
+    .stepTitle{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .stepTitle h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .stepTitle small{
+      color: var(--muted);
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .option{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 12px 12px;
+      text-align:center;
+      font-weight:700;
+      font-size: 14px;
+      color: var(--text);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+      transition: transform .16s ease, border-color .2s ease, background .2s ease;
+    }
+    .option:active{ transform: scale(.98); }
+    .option:hover{ border-color: rgba(255,255,255,.18); }
+    .option.selected{
+      border-color: rgba(124,92,255,.65);
+      background: linear-gradient(180deg, rgba(124,92,255,.20), rgba(255,255,255,.02));
+      box-shadow: 0 10px 28px rgba(124,92,255,.20);
+      animation: pop .22s ease-out;
+    }
+    @keyframes pop{
+      0%{ transform: scale(.98); }
+      100%{ transform: scale(1); }
+    }
+    .option.selected::after{
+      content:"";
+      position:absolute; inset:auto -40% -50% -40%;
+      height: 120px;
+      background: radial-gradient(circle at 50% 0%, rgba(124,92,255,.35), transparent 60%);
+      transform: rotate(8deg);
+    }
+
+    /* Bottom action bar */
+    .bar{
+      position: sticky;
+      bottom: 10px;
+      z-index: 5;
+      margin-top: 14px;
+    }
+    .barInner{
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(11,18,32,.82);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 16px 50px rgba(0,0,0,.45);
+      padding: 12px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .preview{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 0;
+    }
+    .preview .label{ color: var(--muted); font-size: 12px; }
+    .preview .value{
+      font-weight:800;
+      font-size: 18px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .btn{
+      border:0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight:800;
+      font-size: 14px;
+      cursor:pointer;
+      color: #081021;
+      background: linear-gradient(180deg, rgba(124,92,255,1), rgba(124,92,255,.78));
+      box-shadow: 0 12px 30px rgba(124,92,255,.30);
+      transition: transform .16s ease, filter .2s ease, opacity .2s ease;
+      -webkit-tap-highlight-color: transparent;
+      white-space:nowrap;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn[disabled]{
+      opacity:.45;
+      cursor:not-allowed;
+      filter:saturate(.5);
+      box-shadow:none;
+    }
+    .btn.secondary{
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      box-shadow:none;
+      border:1px solid var(--line);
+      font-weight:700;
+    }
+
+    /* Result modal */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      z-index: 50;
+      padding: 16px 14px;
+    }
+    .overlay.show{
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      animation: fadeIn .2s ease-out;
+    }
+    @keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+
+    .sheet{
+      width: min(520px, 100%);
+      border-radius: 22px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(11,18,32,.96), rgba(7,11,20,.96));
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+      transform: translateY(18px);
+      animation: sheetUp .28s cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes sheetUp{ to{ transform: translateY(0); } }
+
+    .sheetHeader{
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+    }
+    .sheetHeader .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .sheetHeader .title b{ font-size: 16px; }
+    .sheetHeader .title span{ color: var(--muted); font-size: 12px; }
+
+    .close{
+      width: 40px; height:40px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 18px;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .close:active{ transform: scale(.98); }
+
+    /* Check card */
+    .checkWrap{
+      padding: 14px;
+    }
+
+    .check{
+      position:relative;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+        radial-gradient(900px 260px at 40% 0%, rgba(124,92,255,.18), transparent 55%);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      overflow:hidden;
+      padding: 16px;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: printIn .45s cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes printIn{
+      to{ transform: translateY(0); opacity:1; }
+    }
+
+    .check::before{
+      content:"";
+      position:absolute;
+      inset:-40px -60px auto -60px;
+      height: 120px;
+      background: radial-gradient(circle at 50% 40%, rgba(52,211,153,.18), transparent 60%);
+      transform: rotate(-6deg);
+    }
+
+    .checkTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom: 10px;
+      position:relative;
+      z-index:1;
+    }
+    .checkMark{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:700;
+    }
+    .checkMark i{
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: var(--accent2);
+      box-shadow: 0 0 0 5px rgba(52,211,153,.14);
+    }
+
+    .checkBody{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      padding-top: 6px;
+    }
+
+    .row{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px dashed rgba(255,255,255,.12);
+    }
+    .row span{
+      color: var(--muted);
+      font-weight:700;
+      font-size: 13px;
+    }
+    .row b{
+      font-size: 14px;
+      font-weight:800;
+    }
+
+    .amount{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(124,92,255,.22), rgba(255,255,255,.03));
+      border: 1px solid rgba(124,92,255,.35);
+    }
+    .amount span{ color: rgba(233,238,255,.85); font-weight:800; font-size: 14px; }
+    .amount b{
+      font-size: 26px;
+      letter-spacing: .3px;
+      font-weight:900;
+    }
+
+    .stamp{
+      position:absolute;
+      left: 14px;
+      top: 54px;
+      transform: rotate(-14deg) scale(.7);
+      opacity: 0;
+      border: 3px solid rgba(251,113,133,.85);
+      color: rgba(251,113,133,.92);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight:900;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      background: rgba(251,113,133,.08);
+      mix-blend-mode: screen;
+      animation: stamp .55s cubic-bezier(.2,.9,.2,1) .28s forwards;
+    }
+    @keyframes stamp{
+      0%{ opacity:0; transform: rotate(-14deg) scale(.6); }
+      55%{ opacity:1; transform: rotate(-14deg) scale(1.05); }
+      100%{ opacity:1; transform: rotate(-14deg) scale(1); }
+    }
+
+    .quip{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: rgba(233,238,255,.88);
+      font-weight:600;
+      line-height:1.5;
+    }
+
+    .sheetActions{
+      display:flex;
+      gap: 10px;
+      padding: 14px;
+      border-top:1px solid var(--line);
+      flex-wrap:wrap;
+    }
+    .sheetActions .btn{
+      flex:1;
+      min-width: 120px;
+      justify-content:center;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn.danger{
+      background: linear-gradient(180deg, rgba(251,113,133,1), rgba(251,113,133,.78));
+      box-shadow: 0 12px 30px rgba(251,113,133,.22);
+      color:#17060a;
+    }
+
+    /* Accessibility */
+    .sr{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); border:0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <h1>כמה לשים 💸</h1>
+        <p>מחשבון ישראלי קליל שמציע סכום הגיוני (בערך). בוא נסגור את הפינה.</p>
+      </div>
+      <div class="chip" title="PWA-ready">
+        <span class="dot"></span>
+        <span>Mobile • PWA</span>
+      </div>
+    </header>
+
+    <section class="progress" aria-label="Progress">
+      <div class="progressRow">
+        <div class="seg" id="seg1"><i></i></div>
+        <div class="seg" id="seg2"><i></i></div>
+        <div class="seg" id="seg3"><i></i></div>
+        <div class="seg" id="seg4"><i></i></div>
+      </div>
+      <div class="progressMeta">
+        <span id="stepHint">שלב 1 מתוך 4</span>
+        <span id="readyHint">בחר/י כדי להתקדם</span>
+      </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="stepCard" id="step1Card">
+      <div class="stepTitle">
+        <h2>שלב 1 — קרבה</h2>
+        <small>מה היחסים?</small>
+      </div>
+      <div class="grid" id="closenessOptions"></div>
+    </section>
+
+    <section class="stepCard" id="step2Card">
+      <div class="stepTitle">
+        <h2>שלב 2 — סוג אירוע</h2>
+        <small>מה חוגגים?</small>
+      </div>
+      <div class="grid" id="eventOptions"></div>
+    </section>
+
+    <section class="stepCard" id="step3Card">
+      <div class="stepTitle">
+        <h2>שלב 3 — מקום האירוע</h2>
+        <small>איפה זה קורה?</small>
+      </div>
+      <div class="grid" id="locationOptions"></div>
+    </section>
+
+    <section class="stepCard" id="step4Card">
+      <div class="stepTitle">
+        <h2>שלב 4 — כמה אתם</h2>
+        <small>מי מגיע?</small>
+      </div>
+      <div class="grid" id="attendeesOptions"></div>
+    </section>
+
+    <!-- Bottom bar -->
+    <div class="bar" role="region" aria-label="Actions">
+      <div class="barInner">
+        <div class="preview">
+          <div class="label">הצעה (ברגע שיש הכל):</div>
+          <div class="value" id="previewValue">₪—</div>
+        </div>
+        <button class="btn" id="calcBtn" disabled>חשב</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result overlay -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Result">
+      <div class="sheetHeader">
+        <div class="title">
+          <b>הצ׳ק כבר בדרך</b>
+          <span>אפשר לשתף, לרנדומייזר, או לחשב מחדש</span>
+        </div>
+        <button class="close" id="closeOverlay" aria-label="Close">✕</button>
+      </div>
+
+      <div class="checkWrap">
+        <div class="check" id="checkCard">
+          <div class="stamp" id="stamp">מאושר</div>
+          <div class="checkTop">
+            <div class="checkMark"><i></i><span>KamaLasim</span></div>
+            <div class="checkMark"><span id="checkDate"></span></div>
+          </div>
+
+          <div class="checkBody">
+            <div class="row">
+              <span>לכבוד</span>
+              <b id="recipientText">—</b>
+            </div>
+
+            <div class="amount">
+              <span>סכום</span>
+              <b id="amountText">₪—</b>
+            </div>
+
+            <div class="row">
+              <span>מאת</span>
+              <b>חברים טובים (זה אתם)</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="quip" id="quipText">—</div>
+      </div>
+
+      <div class="sheetActions">
+        <button class="btn secondary" id="recalcBtn">חישוב מחדש</button>
+        <button class="btn" id="randomBtn">רנדומייזר</button>
+        <button class="btn danger" id="shareBtn">שיתוף</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Constants (exact logic) ---
+    const BASE = 200;
+
+    const CLOSENESS_POINTS = {
+      "קולגה": 80,
+      "חברים הכי טובים": 260,
+      "חברים במידה בינונית": 180,
+      "חברים רחוקים": 120,
+      "משפחה קרובה": 320,
+      "משפחה רחוקה": 200,
+      "אח של חבר או חברה": 140,
+      "חברים מהצבא": 220,
+    };
+
+    const EVENT_POINTS = {
+      "חתונה": 220,
+      "ברית/בריתה": 140,
+      "בר/בת מצווה": 160,
+      "חינה": 180,
+    };
+
+    const LOCATION_POINTS = {
+      "אולם או גן אירועים": 200,
+      "מסעדה": 140,
+      "בית כנסת": 120,
+      "בית או חצר": 100,
+    };
+
+    const ATTENDEES_MULT = {
+      "מגיע לבד": 1.00,
+      "מגיע כזוג": 1.60,
+      "זוג +1": 2.10,
+      "יותר מ-3 אנשים": 2.60,
+    };
+
+    const RECIPIENT_BY_EVENT = {
+      "חתונה": "לחתן ולכלה",
+      "ברית/בריתה": "להורים המאושרים",
+      "בר/בת מצווה": "לחתן/כלת השמחה",
+      "חינה": "לזוג ולמשפחה",
+    };
+
+    const QUIPS = [
+      "אבל תכלס שניכם יודעים שאי אפשר לשים מספר על החברות שלכם.",
+      "הבנק פחות אוהב את זה, אבל הלב מתעקש.",
+      "זה לא מדע מדויק… אבל זה כן אקסל בראש.",
+      "החיים יקרים, אבל גם אתם אנשים טובים.",
+      "אם זה היה תלוי בך היית מביא/ה גם עוגה. (אבל כסף זה סבבה).",
+    ];
+
+    // --- State ---
+    const state = {
+      closeness: null,
+      eventType: null,
+      location: null,
+      attendees: null,
+      result: null,
+      recipient: null
+    };
+
+    // --- Helpers ---
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const roundToNearest10 = (n) => Math.round(n / 10) * 10;
+    const formatILS = (n) => `₪${n}`;
+
+    function computeResult({ closeness, eventType, location, attendees }) {
+      const subtotal = BASE
+        + CLOSENESS_POINTS[closeness]
+        + EVENT_POINTS[eventType]
+        + LOCATION_POINTS[location];
+
+      const raw = subtotal * ATTENDEES_MULT[attendees];
+      const clamped = clamp(raw, 200, 1200);
+      const rounded = roundToNearest10(clamped);
+
+      return clamp(rounded, 200, 1200);
+    }
+
+    function allSelected() {
+      return !!(state.closeness && state.eventType && state.location && state.attendees);
+    }
+
+    function currentStepIndex() {
+      if (!state.closeness) return 1;
+      if (!state.eventType) return 2;
+      if (!state.location) return 3;
+      if (!state.attendees) return 4;
+      return 4;
+    }
+
+    function updateProgressUI() {
+      const step = currentStepIndex();
+      document.getElementById("stepHint").textContent = `שלב ${step} מתוך 4`;
+
+      const segs = [
+        { id:"seg1", done: !!state.closeness },
+        { id:"seg2", done: !!state.eventType },
+        { id:"seg3", done: !!state.location },
+        { id:"seg4", done: !!state.attendees },
+      ];
+      segs.forEach(s => {
+        document.getElementById(s.id).classList.toggle("done", s.done);
+      });
+
+      const ready = allSelected();
+      document.getElementById("readyHint").textContent = ready ? "מוכן/ה לחשב 🎉" : "בחר/י כדי להתקדם";
+
+      // Live preview
+      const preview = document.getElementById("previewValue");
+      const calcBtn = document.getElementById("calcBtn");
+      if (ready) {
+        const res = computeResult(state);
+        preview.textContent = formatILS(res);
+        calcBtn.disabled = false;
+      } else {
+        preview.textContent = "₪—";
+        calcBtn.disabled = true;
+      }
+    }
+
+    function pickRandomQuip() {
+      return QUIPS[Math.floor(Math.random() * QUIPS.length)];
+    }
+
+    function setTodayDate() {
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      document.getElementById("checkDate").textContent = `${dd}/${mm}/${yyyy}`;
+    }
+
+    // --- UI rendering for options ---
+    function createOptions(containerId, options, stateKey) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      options.forEach(label => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.textContent = label;
+
+        btn.addEventListener("click", () => {
+          state[stateKey] = label;
+
+          // Mark selected within this group
+          [...container.querySelectorAll(".option")].forEach(el => el.classList.remove("selected"));
+          btn.classList.add("selected");
+
+          // Soft auto-scroll vibe: move user toward next step
+          updateProgressUI();
+          autoAdvanceScroll(stateKey);
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    function autoAdvanceScroll(stateKey) {
+      const mapping = {
+        closeness: "step2Card",
+        eventType: "step3Card",
+        location: "step4Card",
+        attendees: null
+      };
+      const nextId = mapping[stateKey];
+      if (!nextId) return;
+      const el = document.getElementById(nextId);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // --- Result overlay + animations ---
+    const overlay = document.getElementById("overlay");
+    const closeOverlayBtn = document.getElementById("closeOverlay");
+    const amountEl = document.getElementById("amountText");
+    const recipientEl = document.getElementById("recipientText");
+    const quipEl = document.getElementById("quipText");
+    const stampEl = document.getElementById("stamp");
+
+    function openOverlay() {
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
+      // Reset stamp animation by forcing reflow
+      stampEl.style.animation = "none";
+      void stampEl.offsetHeight;
+      stampEl.style.animation = "";
+
+      setTodayDate();
+
+      const result = computeResult(state);
+      const recipient = RECIPIENT_BY_EVENT[state.eventType];
+      state.result = result;
+      state.recipient = recipient;
+
+      recipientEl.textContent = recipient;
+      quipEl.textContent = pickRandomQuip();
+
+      // Count up animation
+      animateAmount(0, result, 520);
+    }
+
+    function closeOverlay() {
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    closeOverlayBtn.addEventListener("click", closeOverlay);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+
+    function animateAmount(from, to, durationMs) {
+      const start = performance.now();
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+      function frame(now) {
+        const t = clamp((now - start) / durationMs, 0, 1);
+        const v = Math.round(from + (to - from) * ease(t));
+        amountEl.textContent = formatILS(v);
+        if (t < 1) requestAnimationFrame(frame);
+        else amountEl.textContent = formatILS(to);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // --- Buttons ---
+    document.getElementById("calcBtn").addEventListener("click", () => {
+      if (!allSelected()) return;
+      openOverlay();
+    });
+
+    document.getElementById("recalcBtn").addEventListener("click", () => {
+      // Reset state
+      state.closeness = null;
+      state.eventType = null;
+      state.location = null;
+      state.attendees = null;
+      state.result = null;
+      state.recipient = null;
+
+      // Clear selections UI
+      ["closenessOptions","eventOptions","locationOptions","attendeesOptions"].forEach(id => {
+        document.getElementById(id).querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
+      });
+
+      updateProgressUI();
+      closeOverlay();
+      document.querySelector("header").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.getElementById("randomBtn").addEventListener("click", () => {
+      if (state.result == null) return;
+      const delta = Math.floor(Math.random() * 101) - 50; // [-50..+50]
+      const randomized = clamp(state.result + delta, 200, 1200);
+      const rounded = roundToNearest10(randomized);
+      const finalVal = clamp(rounded, 200, 1200);
+      state.result = finalVal;
+
+      quipEl.textContent = pickRandomQuip();
+      // Re-animate amount from current displayed to new value
+      const currentDisplayed = parseInt((amountEl.textContent || "₪0").replace("₪",""), 10) || 0;
+      animateAmount(currentDisplayed, finalVal, 420);
+    });
+
+    async function shareTextFallback() {
+      const text = `KamaLasim אומר/ת: ₪${state.result} — ${state.recipient}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "KamaLasim", text });
+          return true;
+        } catch (e) { /* user cancelled or not supported */ }
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("העתקתי ללוח 📋");
+        return true;
+      } catch (e) {
+        prompt("העתק/י את הטקסט:", text);
+        return true;
+      }
+    }
+
+    async function shareAsImageIfPossible() {
+      // Try capturing the check card only
+      const check = document.getElementById("checkCard");
+      if (!window.html2canvas) return false;
+
+      const canvas = await html2canvas(check, {
+        backgroundColor: null,
+        scale: Math.min(2, window.devicePixelRatio || 1),
+        useCORS: true,
+      });
+
+      return new Promise(async (resolve) => {
+        canvas.toBlob(async (blob) => {
+          if (!blob) return resolve(false);
+
+          const file = new File([blob], "kamaslasim-check.png", { type: "image/png" });
+
+          // Web Share with files (if supported)
+          if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+            try {
+              await navigator.share({
+                title: "KamaLasim",
+                text: `KamaLasim אומר/ת: ₪${state.result} — ${state.recipient}`,
+                files: [file],
+              });
+              return resolve(true);
+            } catch (e) {
+              // fall through
+            }
+          }
+
+          // If file sharing isn't supported: download image
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "kamaslasim-check.png";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          alert("שמתי לך תמונה להורדה — אם אין שיתוף תמונות במכשיר, אפשר לשתף אותה ידנית 😊");
+          resolve(true);
+        }, "image/png");
+      });
+    }
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      if (state.result == null) return;
+
+      // Prefer image share; fallback to text
+      try {
+        const okImg = await shareAsImageIfPossible();
+        if (okImg) return;
+      } catch (e) { /* ignore */ }
+
+      await shareTextFallback();
+    });
+
+    // --- Init options ---
+    createOptions("closenessOptions", Object.keys(CLOSENESS_POINTS), "closeness");
+    createOptions("eventOptions", Object.keys(EVENT_POINTS), "eventType");
+    createOptions("locationOptions", Object.keys(LOCATION_POINTS), "location");
+    createOptions("attendeesOptions", Object.keys(ATTENDEES_MULT), "attendees");
+    updateProgressUI();
+
+    // --- Register Service Worker ---
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
