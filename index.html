@@ -725,6 +725,224 @@
   .amountRow{ grid-template-columns: 140px 1fr; }
   .chequeNo, .dateBox{ min-width: 86px; }
 }
+    /* ===== Israeli cheque look (photo-inspired) ===== */
+
+.check.ilCheque{
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.14);
+  background: linear-gradient(180deg, #cfeff0, #bfe6e8);
+  color: #0b2a2e;
+  box-shadow: 0 18px 60px rgba(0,0,0,.35);
+  overflow: hidden;
+  padding: 14px;
+  direction: rtl;
+}
+
+/* subtle paper texture / watermark */
+.ilWatermark{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.35), transparent 55%),
+    radial-gradient(circle at 80% 40%, rgba(255,255,255,.22), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,.02) 0 2px, transparent 2px 10px);
+  opacity:.6;
+  pointer-events:none;
+}
+
+.ilTop{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 10px;
+}
+
+.ilBankTitle{
+  font-weight:900;
+  font-size: 18px;
+  letter-spacing:.2px;
+}
+.ilBankSub{
+  font-weight:700;
+  font-size: 12px;
+  opacity:.75;
+}
+
+.ilOnlyStamp{
+  display:inline-block;
+  font-weight:900;
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 2px solid rgba(11,42,46,.45);
+  border-radius: 999px;
+  background: rgba(255,255,255,.35);
+}
+
+/* rows */
+.ilBody{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+.ilRow{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.ilLabel{
+  font-weight:900;
+  font-size: 11px;
+  opacity:.8;
+  white-space:nowrap;
+}
+.ilLabel.en{ direction:ltr; font-family: ui-sans-serif, system-ui; }
+.ilLabel.he{ font-size: 12px; }
+.ilLabel.heSmall{ font-size: 11px; opacity:.75; }
+
+.ilLine{
+  flex:1;
+  min-width: 0;
+  border-bottom: 2px solid rgba(11,42,46,.35);
+  padding: 6px 6px 7px;
+}
+
+/* handwriting feel */
+.ilHand{
+  font-weight:800;
+  font-size: 18px;
+  letter-spacing:.2px;
+  color:#0a2a66;
+}
+.ilHandSmall{
+  font-size: 15px;
+  opacity:.95;
+}
+
+/* amount box like the photo, on the right */
+.ilWords{
+  align-items:flex-end;
+}
+.ilAmountBox{
+  width: 170px;
+  border: 2px solid rgba(11,42,46,.45);
+  border-radius: 10px;
+  background: rgba(255,255,255,.35);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 8px 10px;
+  gap: 8px;
+}
+.ilAmountBoxLabel{
+  font-weight:900;
+  font-size: 14px;
+  opacity:.8;
+}
+.ilAmountBoxValue{
+  font-size: 22px;
+}
+
+/* signature + date */
+.ilBottomRow{
+  justify-content:space-between;
+  gap: 16px;
+}
+
+.ilSig{
+  flex: 1.2;
+}
+.ilSigLine{
+  height: 22px;
+  border-bottom: 3px solid rgba(11,42,46,.40);
+  margin: 6px 0 2px;
+}
+
+.ilDate{
+  flex: .9;
+  direction: ltr;
+  text-align:left;
+}
+.ilDateBoxes{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  margin: 6px 0 2px;
+}
+.ilDateBox{
+  border: 2px solid rgba(11,42,46,.35);
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,.30);
+  font-weight:900;
+  font-size: 12px;
+  min-width: 70px;
+  text-align:center;
+}
+
+/* approved stamp */
+.ilApproveStamp{
+  position:absolute;
+  left: 16px;
+  top: 54%;
+  transform: rotate(-12deg) scale(.7);
+  opacity: 0;
+  border: 3px solid rgba(220,38,38,.85);
+  color: rgba(220,38,38,.92);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight:900;
+  letter-spacing: .8px;
+  background: rgba(220,38,38,.08);
+  animation: stamp .55s cubic-bezier(.2,.9,.2,1) .18s forwards;
+}
+
+/* micr strip */
+.ilMicrStrip{
+  margin-top: 14px;
+  background: rgba(0,0,0,.08);
+  border-top: 1px solid rgba(0,0,0,.10);
+  padding: 10px 12px 12px;
+  border-radius: 0 0 14px 14px;
+  position:relative;
+  z-index:1;
+}
+.ilMicrLabels{
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  font-size: 10px;
+  font-weight:900;
+  opacity:.7;
+  direction:ltr;
+}
+.ilMicrLine{
+  margin-top: 6px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 10px;
+  direction:ltr;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-weight:900;
+  letter-spacing: 1.4px;
+  color: rgba(0,0,0,.78);
+}
+.ilMicrInk{ opacity:.7; }
+
+/* mobile tweaks */
+@media (max-width: 390px){
+  .ilAmountBox{ width: 150px; }
+  .ilAmountBoxValue{ font-size: 20px; }
+  .ilHand{ font-size: 17px; }
+}
   </style>
 </head>
 
@@ -787,7 +1005,77 @@
       <div class="grid" id="attendeesOptions"></div>
     </section>
 
-    <!-- Bottom bar -->
+    <!-- Bo<div class="check ilCheque" id="checkCard">
+  <div class="ilWatermark" aria-hidden="true"></div>
+
+  <div class="ilTop">
+    <div class="ilBank">
+      <div class="ilBankTitle">מדינת ישראל</div>
+      <div class="ilBankSub">מזרח התיכון • מדינת הצ׳ק</div>
+    </div>
+
+    <div class="ilOnly">
+      <span class="ilOnlyStamp">למוטב בלבד</span>
+    </div>
+  </div>
+
+  <div class="ilBody">
+    <!-- Pay to -->
+    <div class="ilRow ilPayTo">
+      <div class="ilLabel en">PAY TO</div>
+      <div class="ilLine">
+        <span class="ilHand" id="recipientText">—</span>
+      </div>
+      <div class="ilLabel he">שלמו ל</div>
+    </div>
+
+    <!-- Amount words -->
+    <div class="ilRow ilWords">
+      <div class="ilLabel heSmall">סכום במילים</div>
+      <div class="ilLine">
+        <span class="ilHand ilHandSmall" id="amountWords">—</span>
+      </div>
+      <div class="ilAmountBox">
+        <div class="ilAmountBoxLabel">₪</div>
+        <div class="ilAmountBoxValue ilHand" id="amountText">₪—</div>
+      </div>
+    </div>
+
+    <!-- Signature + Date -->
+    <div class="ilRow ilBottomRow">
+      <div class="ilSig">
+        <div class="ilLabel en">SIGNATURE</div>
+        <div class="ilSigLine"></div>
+        <div class="ilLabel heSmall">חתימה</div>
+      </div>
+
+      <div class="ilDate">
+        <div class="ilLabel en">DATE</div>
+        <div class="ilDateBoxes">
+          <div class="ilDateBox">/</div>
+          <div class="ilDateBox">/</div>
+          <div class="ilDateBox" id="checkDate">--/--/----</div>
+        </div>
+        <div class="ilLabel heSmall">תאריך</div>
+      </div>
+    </div>
+
+    <!-- Stamp -->
+    <div class="ilApproveStamp" id="stamp">מאושר</div>
+  </div>
+
+  <!-- MICR strip -->
+  <div class="ilMicrStrip">
+    <div class="ilMicrLabels">
+      <span>CHEQUE No.</span><span>BRANCH No.</span><span>ACCOUNT No.</span>
+    </div>
+    <div class="ilMicrLine">
+      <span class="ilMicrInk">⑆</span>
+      <span id="micrLine">00123   010   12345   4567890   9</span>
+      <span class="ilMicrInk">⑆</span>
+    </div>
+  </div>
+</div>ttom bar -->
     <div class="bar" role="region" aria-label="Actions">
       <div class="barInner">
         <div class="preview">
@@ -812,67 +1100,7 @@
 
       <div class="checkWrap">
         <div class="check" id="checkCard">
-          <div class="check israeliCheck" id="checkCard">
-  <!-- subtle perforation edge -->
-  <div class="perforation" aria-hidden="true"></div>
-
-  <!-- Stamp -->
-  <div class="stamp" id="stamp">שולם</div>
-
-  <div class="checkHeader">
-    <div class="checkBrand">
-      <div class="bankLogo" aria-hidden="true">בנק</div>
-      <div class="bankMeta">
-        <div class="bankName">בנק ישראלי כללי</div>
-        <div class="bankSub">סניף 123 • חשבון 456789</div>
-      </div>
-    </div>
-
-    <div class="checkTopRight">
-      <div class="chequeNo">
-        <span>מס׳ צ׳ק</span>
-        <b id="chequeNumber">000123</b>
-      </div>
-      <div class="dateBox">
-        <span>תאריך</span>
-        <b id="checkDate"></b>
-      </div>
-    </div>
-  </div>
-
-  <div class="dividerLine"></div>
-
-  <div class="checkMain">
-    <div class="toRow">
-      <span class="fieldLabel">לכבוד</span>
-      <div class="fieldValue" id="recipientText">—</div>
-      <div class="onlyTo">
-        <span class="pill">למוטב בלבד</span>
-      </div>
-    </div>
-
-    <div class="amountRow">
-      <div class="amountBox">
-        <span class="fieldLabel">סכום</span>
-        <div class="amountValue" id="amountText">₪—</div>
-      </div>
-
-      <div class="amountWords">
-        <span class="fieldLabel">סכום במילים</span>
-        <div class="wordsLine" id="amountWords">—</div>
-      </div>
-    </div>
-
-    <div class="signatureRow">
-      <div class="sigField">
-        <span class="fieldLabel">חתימה</span>
-        <div class="sigLine"></div>
-      </div>
-      <div class="fromField">
-        <span class="fieldLabel">מאת</span>
-        <div class="fieldValueSmall">חברים טובים (זה אתם)</div>
-      </div>
-    </div>
+          <
   </div>
 
   <div class="micr">
