@@ -486,6 +486,245 @@
       position:absolute; width:1px; height:1px; padding:0; margin:-1px;
       overflow:hidden; clip:rect(0,0,0,0); border:0;
     }
+    /* --- Israeli Check Visual Upgrade --- */
+.check.israeliCheck{
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+    radial-gradient(900px 260px at 40% 0%, rgba(124,92,255,.16), transparent 55%);
+}
+
+.perforation{
+  position:absolute;
+  top: 0;
+  right: -10px;
+  width: 18px;
+  height: 100%;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.18) 22%, transparent 24%) 0 10px / 18px 20px;
+  opacity:.55;
+  filter: blur(.1px);
+}
+
+.checkHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 10px;
+  position:relative;
+  z-index:1;
+}
+
+.checkBrand{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  min-width: 0;
+}
+
+.bankLogo{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  letter-spacing:.6px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 26px rgba(0,0,0,.25);
+}
+
+.bankMeta{ min-width:0; }
+.bankName{
+  font-weight:900;
+  font-size: 14px;
+  letter-spacing:.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.bankSub{
+  margin-top:2px;
+  color: rgba(233,238,255,.78);
+  font-weight:700;
+  font-size: 12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.checkTopRight{
+  display:flex;
+  gap: 8px;
+  align-items:stretch;
+}
+
+.chequeNo, .dateBox{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width: 92px;
+  text-align:right;
+}
+
+.chequeNo span, .dateBox span{
+  color: rgba(233,238,255,.72);
+  font-weight:800;
+  font-size: 11px;
+}
+.chequeNo b, .dateBox b{
+  font-weight:900;
+  font-size: 13px;
+}
+
+.dividerLine{
+  height:1px;
+  background: rgba(255,255,255,.12);
+  margin: 12px 0;
+  position:relative;
+  z-index:1;
+}
+
+.checkMain{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.fieldLabel{
+  color: rgba(233,238,255,.75);
+  font-weight:900;
+  font-size: 12px;
+}
+
+.toRow{
+  display:grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: 10px;
+  align-items:center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.14);
+}
+
+.fieldValue{
+  font-weight:900;
+  font-size: 14px;
+}
+
+.onlyTo .pill{
+  font-size: 11px;
+  font-weight:900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.04);
+  color: rgba(233,238,255,.82);
+  white-space:nowrap;
+}
+
+.amountRow{
+  display:grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px;
+  align-items:stretch;
+}
+
+.amountBox{
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(124,92,255,.22), rgba(255,255,255,.03));
+  border: 1px solid rgba(124,92,255,.35);
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.amountValue{
+  font-weight:1000;
+  font-size: 26px;
+  letter-spacing:.3px;
+}
+
+.amountWords{
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.14);
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+}
+
+.wordsLine{
+  height: 18px;
+  border-bottom: 2px solid rgba(255,255,255,.22);
+  font-weight:800;
+  color: rgba(233,238,255,.88);
+  padding-bottom: 6px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.signatureRow{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.sigField, .fromField{
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.14);
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+}
+
+.sigLine{
+  height: 20px;
+  border-bottom: 2px solid rgba(255,255,255,.22);
+}
+
+.fieldValueSmall{
+  font-weight:800;
+  color: rgba(233,238,255,.88);
+}
+
+.micr{
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.16);
+  border: 1px solid rgba(255,255,255,.10);
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  align-items:center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-weight:800;
+  letter-spacing: 1.2px;
+  color: rgba(233,238,255,.88);
+}
+
+.micrInk{
+  opacity:.7;
+}
+
+@media (max-width: 390px){
+  .amountRow{ grid-template-columns: 140px 1fr; }
+  .chequeNo, .dateBox{ min-width: 86px; }
+}
   </style>
 </head>
 
@@ -573,28 +812,75 @@
 
       <div class="checkWrap">
         <div class="check" id="checkCard">
-          <div class="stamp" id="stamp">מאושר</div>
-          <div class="checkTop">
-            <div class="checkMark"><i></i><span>KamaLasim</span></div>
-            <div class="checkMark"><span id="checkDate"></span></div>
-          </div>
+          <div class="check israeliCheck" id="checkCard">
+  <!-- subtle perforation edge -->
+  <div class="perforation" aria-hidden="true"></div>
 
-          <div class="checkBody">
-            <div class="row">
-              <span>לכבוד</span>
-              <b id="recipientText">—</b>
-            </div>
+  <!-- Stamp -->
+  <div class="stamp" id="stamp">שולם</div>
 
-            <div class="amount">
-              <span>סכום</span>
-              <b id="amountText">₪—</b>
-            </div>
+  <div class="checkHeader">
+    <div class="checkBrand">
+      <div class="bankLogo" aria-hidden="true">בנק</div>
+      <div class="bankMeta">
+        <div class="bankName">בנק ישראלי כללי</div>
+        <div class="bankSub">סניף 123 • חשבון 456789</div>
+      </div>
+    </div>
 
-            <div class="row">
-              <span>מאת</span>
-              <b>חברים טובים (זה אתם)</b>
-            </div>
-          </div>
+    <div class="checkTopRight">
+      <div class="chequeNo">
+        <span>מס׳ צ׳ק</span>
+        <b id="chequeNumber">000123</b>
+      </div>
+      <div class="dateBox">
+        <span>תאריך</span>
+        <b id="checkDate"></b>
+      </div>
+    </div>
+  </div>
+
+  <div class="dividerLine"></div>
+
+  <div class="checkMain">
+    <div class="toRow">
+      <span class="fieldLabel">לכבוד</span>
+      <div class="fieldValue" id="recipientText">—</div>
+      <div class="onlyTo">
+        <span class="pill">למוטב בלבד</span>
+      </div>
+    </div>
+
+    <div class="amountRow">
+      <div class="amountBox">
+        <span class="fieldLabel">סכום</span>
+        <div class="amountValue" id="amountText">₪—</div>
+      </div>
+
+      <div class="amountWords">
+        <span class="fieldLabel">סכום במילים</span>
+        <div class="wordsLine" id="amountWords">—</div>
+      </div>
+    </div>
+
+    <div class="signatureRow">
+      <div class="sigField">
+        <span class="fieldLabel">חתימה</span>
+        <div class="sigLine"></div>
+      </div>
+      <div class="fromField">
+        <span class="fieldLabel">מאת</span>
+        <div class="fieldValueSmall">חברים טובים (זה אתם)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="micr">
+    <span class="micrInk">⑆</span>
+    <span id="micrLine">00123  010  12345  4567890  9</span>
+    <span class="micrInk">⑆</span>
+  </div>
+</div>
         </div>
 
         <div class="quip" id="quipText">—</div>
