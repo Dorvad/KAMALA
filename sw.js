@@ -1,7 +1,10 @@
-const CACHE_NAME = "kamaslasim-v3";
+const CACHE_NAME = "kamaslasim-v4";
 const ASSETS = [
   "./",
   "./index.html",
+  "./styles.css",
+  "./app.js",
+  "./components.js",
   "./manifest.webmanifest",
   "./sw.js",
   "./icon-192.png",
@@ -28,4 +31,4 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
-}); 
+});
