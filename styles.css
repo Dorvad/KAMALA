@@ -145,6 +145,11 @@ body{
   min-height:44px;
 }
 
+.breadcrumbs button:focus-visible{
+  outline:none;
+  box-shadow: var(--ring);
+}
+
 .breadcrumbs button[aria-current="step"]{
   color: var(--ink);
   background: rgba(202,162,107,.18);
@@ -214,6 +219,10 @@ body{
   color: var(--ink);
   cursor:pointer;
   min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1.3;
   position:relative;
   overflow:hidden;
   transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
@@ -265,7 +274,12 @@ body{
   gap:10px;
   align-items:center;
   justify-content:space-between;
+  flex-wrap:wrap;
   box-shadow: var(--shadow);
+}
+
+.bar-inner--start{
+  justify-content:flex-start;
 }
 
 .preview{
@@ -273,6 +287,7 @@ body{
   flex-direction:column;
   gap:2px;
   min-width: 0;
+  flex: 1 1 160px;
 }
 
 .preview .label{
@@ -286,6 +301,13 @@ body{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+
+.bar-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-start;
 }
 
 .button{
@@ -531,6 +553,8 @@ body{
 @media (max-width: 420px){
   .grid{ grid-template-columns: 1fr; }
   .button{ min-width: 0; }
+  .bar-inner{ align-items:flex-start; }
+  .preview .value{ font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce){

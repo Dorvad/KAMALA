@@ -81,7 +81,7 @@ export function renderBreadcrumbs(currentStep, selections) {
                 ${isCurrent ? "aria-current=\"step\"" : ""}
                 class="${isCompleted ? "completed" : ""}"
                 ${isCompleted ? "" : "disabled"}
-                aria-disabled="${isCompleted ? "false" : "true"}
+                aria-disabled="${isCompleted ? "false" : "true"}"
               >
                 ${index + 1}. ${item.label}
               </button>
@@ -220,7 +220,7 @@ export function renderBar({ label, value, nextLabel, canProceed, showBack }) {
           <span class="label">${label}</span>
           <span class="value">${value}</span>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div class="bar-actions">
           ${showBack ? `<button class="button ghost" data-action="back">חזור</button>` : ""}
           <button class="button primary" data-action="next" ${canProceed ? "" : "disabled"}>
             ${nextLabel}
@@ -234,7 +234,7 @@ export function renderBar({ label, value, nextLabel, canProceed, showBack }) {
 export function renderBackBar() {
   return `
     <div class="bar">
-      <div class="bar-inner" style="justify-content:flex-start;">
+      <div class="bar-inner bar-inner--start">
         <button class="button ghost" data-action="back">חזור</button>
       </div>
     </div>
