@@ -166,12 +166,6 @@ function getQuip() {
   return QUIPS[nextIndex];
 }
 
-function getProgressValue() {
-  const currentIndex = STEP_LABELS.findIndex((item) => item.key === state.step);
-  if (currentIndex === -1) return "";
-  return `${currentIndex + 1} מתוך 4`;
-}
-
 function render() {
   const app = document.querySelector("#app");
   const showBreadcrumbs = STEP_LABELS.some((item) => state.step === item.key || state.step === "review" || state.step === "result");
@@ -192,7 +186,7 @@ function render() {
     const selected = state.selections[state.step];
     content += `<div class="${screenClass}">${renderStep(state.step, selected)}</div>`;
     content += renderBar({
-      label: `שלב ${getProgressValue()}`,
+      label: "התקדמות",
       value: STEP_SUBTITLES[state.step],
       nextLabel: "הבא",
       canProceed: Boolean(selected),
@@ -240,6 +234,8 @@ function bindEvents() {
       const stepKey = button.dataset.step;
       const value = button.dataset.value;
       state.selections[stepKey] = value;
+      state.ui.transition = "static";
+      saveState();
       vibrate();
       render();
     });
@@ -287,6 +283,7 @@ function bindEvents() {
       const nextAmount = randomizeAmount(state.computed.amount);
       state.computed.amount = nextAmount;
       state.computed.amountWords = formatAmountWords(nextAmount);
+      state.ui.transition = "static";
       render();
     });
   }
