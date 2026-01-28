@@ -22,24 +22,24 @@ export const OPTIONS = {
 };
 
 export const STEP_TITLES = {
-  closeness: "מה הקרבה שלכם?",
-  event: "איזה אירוע חוגגים?",
-  location: "איפה האירוע מתקיים?",
-  attendees: "כמה אתם מגיעים?"
+  closeness: "מה הקרבה ביניכם?",
+  event: "איזה אירוע זה?",
+  location: "איפה זה קורה?",
+  attendees: "כמה אתם באים?"
 };
 
 export const STEP_SUBTITLES = {
-  closeness: "נשמור על דיוק, זה משפיע מאוד.",
-  event: "האירוע משפיע על רמת ההשקעה.",
-  location: "מיקום מפואר מעלה מעט את ההמלצה.",
-  attendees: "התאמה לפי מספר המשתתפים." 
+  closeness: "בקטנה, זה עוזר לקלוע.",
+  event: "כל אירוע והאווירה שלו.",
+  location: "איפה חוגגים משפיע קצת על הטון.",
+  attendees: "נחשב לפי כמה אנשים אתם באמת." 
 };
 
 export const QUIPS = [
   "שיהיה במזל טוב, ושלא יתקפל בדרך!",
-  "הסכום הזה יגרום לחיוך גדול.",
-  "מתנה מדויקת כמו שצריך.",
-  "שמישהו יצלם את הצ'ק הזה!",
+  "הסכום הזה ירגיש בדיוק נכון.",
+  "מתנה נעימה, בלי לחשוב יותר מדי.",
+  "זה יעשה להם טוב על הלב.",
   "קצת אהבה, הרבה כבוד."
 ];
 
@@ -48,11 +48,11 @@ export function renderHeader() {
     <header class="header">
       <div class="brand">
         <h1>כמה לשים</h1>
-        <p>מחשב מתנות לאירועים בישראל — בסטייל חתונות.</p>
+        <p>בואו נסגור את עניין המתנה בכיף.</p>
       </div>
       <div class="badge" aria-hidden="true">
         <span class="badge-dot"></span>
-        חכם, מהיר, מדויק
+        נעים, ברור, קצר
       </div>
     </header>
   `;
@@ -104,12 +104,12 @@ export function renderBreadcrumbs(currentStep, selections) {
 export function renderWelcome() {
   return `
     <section class="card section welcome">
-      <div class="hero-ornaments" aria-hidden="true">💍 ✨ 🌸</div>
-      <h2>ברוכים הבאים ל־KamaLasim</h2>
-      <p>נענה על כמה שאלות קצרות ונחשב סכום מתנה מושלם.</p>
+      <div class="hero-ornaments" aria-hidden="true">✨ 💌 🎉</div>
+      <h2>יאללה, נסגור מתנה</h2>
+      <p>כמה שאלות קצרות ואנחנו נותנים סכום שמרגיש נכון.</p>
       <div class="welcome-actions">
-        <button class="button primary" data-action="start">בוא נתחיל</button>
-        <span class="welcome-hint">4 שלבים קצרים, מותאם לנייד.</span>
+        <button class="button primary" data-action="start">בואו נתחיל</button>
+        <span class="welcome-hint">4 צעדים קטנים, מותאם לנייד.</span>
       </div>
     </section>
   `;
@@ -145,8 +145,8 @@ export function renderReview(selections) {
   return `
     <section class="card section">
       <div class="section-title">
-        <h2>סיכום לפני חישוב</h2>
-        <small>אפשר לחזור ולערוך בכל שלב</small>
+        <h2>בדיקה זריזה</h2>
+        <small>אפשר לשנות אם משהו לא יושב</small>
       </div>
       <div class="review-list">
         <div class="review-item"><span>קרבה</span><strong>${selections.closeness}</strong></div>
@@ -162,8 +162,8 @@ export function renderResult({ amount, recipient, amountWords, quip, dateLabel }
   return `
     <section class="card section">
       <div class="section-title">
-        <h2>הצ'ק מוכן!</h2>
-        <small>הנה ההמלצה שלנו</small>
+        <h2>הצ'ק מוכן</h2>
+        <small>זה הסכום שהיינו נותנים</small>
       </div>
       <div class="check-wrap">
         <div class="check" id="check-card">
@@ -210,9 +210,9 @@ export function renderResult({ amount, recipient, amountWords, quip, dateLabel }
       </div>
       <p class="quip">${quip}</p>
       <div class="result-actions">
-        <button class="button secondary" data-action="randomize">רנדומייזר</button>
-        <button class="button primary" data-action="share">שיתוף</button>
-        <button class="button ghost" data-action="restart">חישוב מחדש</button>
+        <button class="button secondary" data-action="randomize">תן עוד אופציה</button>
+        <button class="button primary" data-action="share">לשלוח לחברים</button>
+        <button class="button ghost" data-action="restart">להתחיל מחדש</button>
       </div>
     </section>
   `;
@@ -227,7 +227,7 @@ export function renderBar({ label, value, nextLabel, canProceed, showBack }) {
           <span class="value">${value}</span>
         </div>
         <div class="bar-actions">
-          ${showBack ? `<button class="button ghost" data-action="back">חזור</button>` : ""}
+          ${showBack ? `<button class="button ghost" data-action="back">חזרה</button>` : ""}
           <button class="button primary" data-action="next" ${canProceed ? "" : "disabled"}>
             ${nextLabel}
           </button>
@@ -241,7 +241,7 @@ export function renderBackBar() {
   return `
     <div class="bar">
       <div class="bar-inner bar-inner--start">
-        <button class="button ghost" data-action="back">חזור</button>
+        <button class="button ghost" data-action="back">חזרה</button>
       </div>
     </div>
   `;
