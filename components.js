@@ -202,7 +202,10 @@ export function renderResult({ amount, recipient, amountWords, quip, dateLabel }
                 <span class="pen-dot" aria-hidden="true"></span>
               </div>
             </div>
-            <div class="amount-box" aria-live="polite">₪<span data-amount>${amount}</span></div>
+            <div class="check-meta">
+              <div class="amount-box" aria-live="polite">₪<span data-amount>${amount}</span></div>
+              <button class="button ghost small copy-button" type="button" data-action="copy-amount">העתק סכום</button>
+            </div>
           </div>
           <div class="check-body">
             <div class="check-field">
