@@ -60,6 +60,7 @@ export function renderHeader() {
 
 export function renderBreadcrumbs(currentStep, selections) {
   const currentIndex = STEP_LABELS.findIndex((item) => item.key === currentStep);
+  const progress = Math.max(0, (currentIndex / (STEP_LABELS.length - 1)) * 100);
   const chips = STEP_LABELS.filter((item) => selections[item.key])
     .map((item) => `
       <span class="summary-chip">${item.label}: ${selections[item.key]}</span>
@@ -68,7 +69,11 @@ export function renderBreadcrumbs(currentStep, selections) {
 
   return `
     <nav class="breadcrumbs" role="navigation" aria-label="שלבי התהליך">
-      <ol>
+      <div class="wizard">
+        <div class="wizard-track" aria-hidden="true">
+          <span class="wizard-track-fill" style="width:${progress}%"></span>
+        </div>
+        <ol class="wizard-steps">
         ${STEP_LABELS.map((item, index) => {
           const isCurrent = index === currentIndex;
           const isCompleted = selections[item.key] && index < currentIndex;
@@ -79,16 +84,18 @@ export function renderBreadcrumbs(currentStep, selections) {
                 data-action="breadcrumb"
                 data-step="${item.key}"
                 ${isCurrent ? "aria-current=\"step\"" : ""}
-                class="${isCompleted ? "completed" : ""}"
+                class="wizard-step ${isCompleted ? "completed" : ""} ${isCurrent ? "current" : ""}"
                 ${isCompleted ? "" : "disabled"}
                 aria-disabled="${isCompleted ? "false" : "true"}"
               >
-                ${index + 1}. ${item.label}
+                <span class="wizard-index">${index + 1}</span>
+                <span class="wizard-label">${item.label}</span>
               </button>
             </li>
           `;
         }).join("")}
-      </ol>
+        </ol>
+      </div>
       ${chips ? `<div class="summary-chips">${chips}</div>` : ""}
     </nav>
   `;
@@ -100,10 +107,9 @@ export function renderWelcome() {
       <div class="hero-ornaments" aria-hidden="true">💍 ✨ 🌸</div>
       <h2>ברוכים הבאים ל־KamaLasim</h2>
       <p>נענה על כמה שאלות קצרות ונחשב סכום מתנה מושלם.</p>
-      <div class="bar" style="position:static; margin-top:16px;">
-        <div class="bar-inner" style="justify-content:center;">
-          <button class="button primary" data-action="start">בוא נתחיל</button>
-        </div>
+      <div class="welcome-actions">
+        <button class="button primary" data-action="start">בוא נתחיל</button>
+        <span class="welcome-hint">4 שלבים קצרים, מותאם לנייד.</span>
       </div>
     </section>
   `;
