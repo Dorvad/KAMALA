@@ -312,6 +312,25 @@ function bindEvents() {
     });
   }
 
+  const copyAmountButton = app.querySelector("[data-action='copy-amount']");
+  if (copyAmountButton) {
+    const originalLabel = copyAmountButton.textContent;
+    copyAmountButton.addEventListener("click", async () => {
+      const amount = state.computed.amount;
+      if (!amount) return;
+      try {
+        await navigator.clipboard.writeText(`₪${amount}`);
+        copyAmountButton.textContent = "הועתק!";
+        window.setTimeout(() => {
+          copyAmountButton.textContent = originalLabel;
+        }, 1400);
+      } catch (error) {
+        console.warn("Copy amount failed", error);
+        prompt("העתיקו את הסכום:", `₪${amount}`);
+      }
+    });
+  }
+
   const restartButton = app.querySelector("[data-action='restart']");
   if (restartButton) {
     restartButton.addEventListener("click", () => {
