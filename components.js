@@ -47,7 +47,7 @@ export function renderHeader() {
   return `
     <header class="header">
       <div class="brand">
-        <h1>כמה לשים</h1>
+        <h1>KAMALA</h1>
         <p>בואו נסגור את עניין המתנה בכיף.</p>
       </div>
       <div class="badge" aria-hidden="true">
@@ -61,42 +61,34 @@ export function renderHeader() {
 export function renderBreadcrumbs(currentStep, selections) {
   const currentIndex = STEP_LABELS.findIndex((item) => item.key === currentStep);
   const progress = Math.max(0, (currentIndex / (STEP_LABELS.length - 1)) * 100);
-  const chips = STEP_LABELS.filter((item) => selections[item.key])
-    .map((item) => `
-      <span class="summary-chip">${item.label}: ${selections[item.key]}</span>
-    `)
-    .join("");
 
   return `
     <nav class="breadcrumbs" role="navigation" aria-label="שלבי התהליך">
-      <div class="wizard">
-        <div class="wizard-track" aria-hidden="true">
-          <span class="wizard-track-fill" style="width:${progress}%"></span>
-        </div>
-        <ol class="wizard-steps">
+      <div class="stepper-track" aria-hidden="true">
+        <span class="stepper-track-fill" style="width:${progress}%"></span>
+      </div>
+      <ol class="stepper">
         ${STEP_LABELS.map((item, index) => {
           const isCurrent = index === currentIndex;
           const isCompleted = selections[item.key] && index < currentIndex;
           return `
-            <li>
+            <li class="stepper-item">
               <button
                 type="button"
                 data-action="breadcrumb"
                 data-step="${item.key}"
                 ${isCurrent ? "aria-current=\"step\"" : ""}
-                class="wizard-step ${isCompleted ? "completed" : ""} ${isCurrent ? "current" : ""}"
+                class="stepper-dot ${isCompleted ? "completed" : ""} ${isCurrent ? "current" : ""}"
                 ${isCompleted ? "" : "disabled"}
                 aria-disabled="${isCompleted ? "false" : "true"}"
               >
-                <span class="wizard-index">${index + 1}</span>
-                <span class="wizard-label">${item.label}</span>
+                <span class="stepper-number">${index + 1}</span>
+                <span class="sr-only">${item.label}</span>
               </button>
             </li>
           `;
         }).join("")}
-        </ol>
-      </div>
-      ${chips ? `<div class="summary-chips">${chips}</div>` : ""}
+      </ol>
     </nav>
   `;
 }
@@ -123,7 +115,7 @@ export function renderStep(stepKey, selected) {
         <small>שלב ${STEP_LABELS.findIndex((s) => s.key === stepKey) + 1} מתוך 4</small>
       </div>
       <div class="grid" role="radiogroup" aria-label="${STEP_TITLES[stepKey]}">
-        ${OPTIONS[stepKey].map((option) => `
+        ${OPTIONS[stepKey].map((option, index) => `
           <button
             type="button"
             class="option ${selected === option ? "selected" : ""}"
@@ -132,8 +124,12 @@ export function renderStep(stepKey, selected) {
             data-value="${option}"
             role="radio"
             aria-checked="${selected === option ? "true" : "false"}"
+            style="--option-hue:${(index * 50) % 320}"
           >
-            ${option}
+            <span class="option-sheen" aria-hidden="true"></span>
+            <span class="option-burst" aria-hidden="true"></span>
+            <span class="option-label">${option}</span>
+            <span class="option-check" aria-hidden="true">✓</span>
           </button>
         `).join("")}
       </div>
