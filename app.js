@@ -200,9 +200,9 @@ function render() {
     const selected = state.selections[state.step];
     content += `<div class="${screenClass}">${renderStep(state.step, selected)}</div>`;
     content += renderBar({
-      label: "התקדמות",
+      label: "עוד רגע",
       value: STEP_SUBTITLES[state.step],
-      nextLabel: "הבא",
+      nextLabel: "המשך",
       canProceed: Boolean(selected),
       showBack: state.step !== "closeness"
     });
@@ -211,9 +211,9 @@ function render() {
   if (state.step === "review") {
     content += `<div class="${screenClass}">${renderReview(state.selections)}</div>`;
     content += renderBar({
-      label: "סיכום",
-      value: "בודקים שהכול נכון",
-      nextLabel: "חשב",
+      label: "בדיקה",
+      value: "מסדרים את הפרטים",
+      nextLabel: "חשב סכום",
       canProceed: true,
       showBack: true
     });
