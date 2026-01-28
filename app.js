@@ -130,9 +130,23 @@ function getPreviousStep(current) {
   return STEPS_FLOW[Math.max(index - 1, 0)];
 }
 
+function allSelectionsComplete() {
+  return STEP_LABELS.every((step) => state.selections[step.key]);
+}
+
+function getFirstIncompleteStep() {
+  const next = STEP_LABELS.find((step) => !state.selections[step.key]);
+  return next ? next.key : "review";
+}
+
 function setStep(step, direction = "forward") {
+  let nextStep = step;
+  if ((step === "review" || step === "result") && !allSelectionsComplete()) {
+    nextStep = getFirstIncompleteStep();
+    direction = "back";
+  }
   state.ui.transition = direction;
-  state.step = step;
+  state.step = nextStep;
   saveState();
   render();
 }
