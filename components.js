@@ -43,6 +43,14 @@ export const QUIPS = [
   "קצת אהבה, הרבה כבוד."
 ];
 
+export const SLIDER_FEEDBACK = [
+  "כן, זה מרגיש נכון 😄",
+  "קרוב... עוד טיפה.",
+  "בול! זה יושב מעולה.",
+  "מסתדרים על זה יופי.",
+  "אפשר גם כאן, אבל תראו את המרכז."
+];
+
 export function renderHeader() {
   return `
     <header class="header">
@@ -108,30 +116,48 @@ export function renderWelcome() {
 }
 
 export function renderStep(stepKey, selected) {
+  const stepIndex = STEP_LABELS.findIndex((s) => s.key === stepKey);
   return `
-    <section class="card section">
+    <section class="card section step-slider" data-step="${stepKey}">
       <div class="section-title">
         <h2>${STEP_TITLES[stepKey]}</h2>
-        <small>שלב ${STEP_LABELS.findIndex((s) => s.key === stepKey) + 1} מתוך 4</small>
+        <small>שלב ${stepIndex + 1} מתוך 4</small>
       </div>
-      <div class="grid" role="radiogroup" aria-label="${STEP_TITLES[stepKey]}">
-        ${OPTIONS[stepKey].map((option, index) => `
-          <button
-            type="button"
-            class="option ${selected === option ? "selected" : ""}"
-            data-action="select"
-            data-step="${stepKey}"
-            data-value="${option}"
-            role="radio"
-            aria-checked="${selected === option ? "true" : "false"}"
-            style="--option-hue:${(index * 50) % 320}"
-          >
-            <span class="option-sheen" aria-hidden="true"></span>
-            <span class="option-burst" aria-hidden="true"></span>
-            <span class="option-label">${option}</span>
-            <span class="option-check" aria-hidden="true">✓</span>
-          </button>
-        `).join("")}
+      <p class="step-subtitle">${STEP_SUBTITLES[stepKey]}</p>
+      <div class="reel" data-slider data-step="${stepKey}">
+        <div class="reel-spotlight" aria-hidden="true"></div>
+        <div class="reel-viewport" role="radiogroup" aria-label="${STEP_TITLES[stepKey]}" tabindex="0">
+          <div class="reel-track">
+            ${OPTIONS[stepKey].map((option, index) => `
+              <button
+                type="button"
+                class="reel-card ${selected === option ? "is-selected" : ""}"
+                data-value="${option}"
+                data-index="${index}"
+                role="radio"
+                aria-checked="${selected === option ? "true" : "false"}"
+                tabindex="${selected === option ? "0" : "-1"}"
+                style="--option-hue:${(index * 50) % 320}"
+              >
+                <span class="reel-card-glow" aria-hidden="true"></span>
+                <span class="reel-card-label">${option}</span>
+                <span class="reel-card-check" aria-hidden="true">✓</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+        <div class="reel-feedback">
+          <span class="reel-quip" data-slider-quip>בחרו תנועה והשאר יסתדר</span>
+        </div>
+        <div class="reel-dots" aria-hidden="true">
+          ${OPTIONS[stepKey].map((_, index) => `
+            <span class="reel-dot ${selected === OPTIONS[stepKey][index] ? "is-active" : ""}" data-dot-index="${index}"></span>
+          `).join("")}
+        </div>
+        <div class="reel-live sr-only" aria-live="polite" data-slider-live></div>
+      </div>
+      <div class="reel-actions">
+        <button type="button" class="button ghost reel-shuffle" data-action="shuffle">🎲 ערבב</button>
       </div>
     </section>
   `;

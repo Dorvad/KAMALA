@@ -252,6 +252,13 @@ body{
   margin-bottom: 12px;
 }
 
+.step-subtitle{
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight:600;
+}
+
 .section-title h2{
   margin:0;
   font-size: 18px;
@@ -266,6 +273,171 @@ body{
   display:grid;
   grid-template-columns: 1fr;
   gap:12px;
+}
+
+.reel{
+  position:relative;
+  padding: 8px 0 6px;
+}
+
+.reel-spotlight{
+  position:absolute;
+  inset-inline: 18%;
+  top: 8px;
+  bottom: 42px;
+  border-radius: 26px;
+  background: radial-gradient(circle at center, rgba(255,255,255,.9), rgba(255,255,255,.2) 60%, transparent 70%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.7), 0 0 18px rgba(91,127,255,.28);
+  pointer-events:none;
+}
+
+.reel-viewport{
+  position:relative;
+  overflow:hidden;
+  padding: 10px 0 16px;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.reel-viewport.is-dragging{
+  cursor: grabbing;
+}
+
+.reel-track{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  will-change: transform;
+}
+
+.reel-card{
+  --option-hue: 220;
+  --scale: 1;
+  --desaturate: 0;
+  flex: 0 0 auto;
+  width: clamp(190px, 72%, 280px);
+  border-radius: 24px;
+  padding: 18px 16px;
+  text-align:center;
+  font-weight:800;
+  font-size: 15px;
+  color: var(--ink);
+  border:1px solid rgba(24,36,56,.12);
+  background: linear-gradient(140deg, hsla(var(--option-hue), 85%, 96%, .95), hsla(var(--option-hue), 70%, 92%, .7));
+  box-shadow: 0 12px 26px rgba(26,39,64,.14);
+  position:relative;
+  transform: translateZ(0) scale(var(--scale));
+  filter: saturate(calc(1 - var(--desaturate)));
+  transition: transform .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth), border-color .28s ease, filter .28s ease;
+  overflow:hidden;
+}
+
+.reel-card:focus-visible{
+  outline:none;
+  box-shadow: var(--ring);
+}
+
+.reel-card::after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background: radial-gradient(circle, rgba(255,255,255,.9), rgba(255,255,255,0) 60%);
+  opacity:0;
+  pointer-events:none;
+  z-index:1;
+}
+
+.reel-card.spark::after{
+  animation: reelSpark .5s var(--ease-smooth);
+}
+
+.reel-card-glow{
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at top, hsla(var(--option-hue), 80%, 70%, .18), transparent 60%);
+  opacity:.7;
+  pointer-events:none;
+  z-index:0;
+}
+
+.reel-card-label{
+  position:relative;
+  z-index:2;
+}
+
+.reel-card-check{
+  position:absolute;
+  top:12px;
+  inset-inline-start:12px;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,.95);
+  border:2px solid rgba(91,127,255,.7);
+  font-size: 12px;
+  color: #1a2450;
+  box-shadow: 0 8px 18px rgba(91,127,255,.28);
+  opacity:0;
+  transform: scale(.6);
+  transition: opacity .2s ease, transform .2s var(--ease-smooth);
+  z-index:3;
+}
+
+.reel-card.is-selected{
+  border-color: rgba(91,127,255,.85);
+  box-shadow: 0 18px 34px rgba(91,127,255,.24), 0 0 0 2px rgba(91,127,255,.25) inset;
+  transform: translateZ(0) scale(1.03);
+}
+
+.reel-card.is-selected .reel-card-check{
+  opacity:1;
+  transform: scale(1);
+}
+
+.reel-feedback{
+  text-align:center;
+  font-weight:600;
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 20px;
+}
+
+.reel-dots{
+  margin-top: 8px;
+  display:flex;
+  justify-content:center;
+  gap:6px;
+}
+
+.reel-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background: rgba(24,36,56,.18);
+  transition: transform .2s var(--ease-smooth), background .2s ease;
+}
+
+.reel-dot.is-active{
+  background: var(--accent);
+  transform: scale(1.25);
+}
+
+.reel-actions{
+  display:flex;
+  justify-content:center;
+  margin-top: 10px;
+}
+
+.reel-shuffle{
+  font-size: 13px;
+}
+
+@keyframes reelSpark{
+  0%{ opacity:0; transform: scale(.8); }
+  60%{ opacity:.8; }
+  100%{ opacity:0; transform: scale(1.15); }
 }
 
 .option{
@@ -367,6 +539,15 @@ body{
 
 .option.selected .option-burst{
   animation: optionBurst .5s var(--ease-smooth);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .reel-card,
+  .reel-dot,
+  .reel-card::after{
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 @keyframes selectPulse{

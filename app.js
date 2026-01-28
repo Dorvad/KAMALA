@@ -1,9 +1,9 @@
 import {
   STEP_LABELS,
-  OPTIONS,
   STEP_TITLES,
   STEP_SUBTITLES,
   QUIPS,
+  SLIDER_FEEDBACK,
   renderHeader,
   renderBreadcrumbs,
   renderWelcome,
@@ -13,6 +13,7 @@ import {
   renderBar,
   renderBackBar
 } from "./components.js";
+import { initStepSliders } from "./slider.js";
 
 // Theme timings: tweak animation durations in styles.css keyframes or adjust ANIMATION_TIMINGS below.
 const ANIMATION_TIMINGS = {
@@ -243,16 +244,18 @@ function render() {
 function bindEvents() {
   const app = document.querySelector("#app");
 
-  app.querySelectorAll("[data-action='select']").forEach((button) => {
-    button.addEventListener("click", () => {
-      const stepKey = button.dataset.step;
-      const value = button.dataset.value;
+  initStepSliders({
+    root: app,
+    selections: state.selections,
+    reducedMotion: state.ui.reducedMotion,
+    feedbackMessages: SLIDER_FEEDBACK,
+    onSelect: (stepKey, value) => {
       state.selections[stepKey] = value;
       state.ui.transition = "static";
       saveState();
       vibrate();
       render();
-    });
+    }
   });
 
   app.querySelectorAll("[data-action='next']").forEach((button) => {
