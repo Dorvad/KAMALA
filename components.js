@@ -67,7 +67,7 @@ export function renderHeader() {
 }
 
 export function renderBreadcrumbs(currentStep, selections) {
-  const currentIndex = STEP_LABELS.findIndex((item) => item.key === currentStep);
+  const currentIndex = Math.max(0, STEP_LABELS.findIndex((item) => item.key === currentStep));
   const progress = Math.max(0, (currentIndex / (STEP_LABELS.length - 1)) * 100);
 
   return `
@@ -105,10 +105,10 @@ export function renderWelcome() {
   return `
     <section class="card section welcome">
       <div class="hero-ornaments" aria-hidden="true">✨ 💌 🎉</div>
-      <h2>יאללה, נסגור מתנה</h2>
+      <h2 tabindex="-1" data-step-title>יאללה, נסגור מתנה</h2>
       <p>כמה שאלות קצרות ואנחנו נותנים סכום שמרגיש נכון.</p>
       <div class="welcome-actions">
-        <button class="button primary" data-action="start">בואו נתחיל</button>
+        <button class="button primary" type="button" data-action="start">בואו נתחיל</button>
         <span class="welcome-hint">4 צעדים קטנים, מותאם לנייד.</span>
       </div>
     </section>
@@ -120,7 +120,7 @@ export function renderStep(stepKey, selected) {
   return `
     <section class="card section step-slider" data-step="${stepKey}">
       <div class="section-title">
-        <h2>${STEP_TITLES[stepKey]}</h2>
+        <h2 tabindex="-1" data-step-title>${STEP_TITLES[stepKey]}</h2>
         <small>שלב ${stepIndex + 1} מתוך 4</small>
       </div>
       <p class="step-subtitle">${STEP_SUBTITLES[stepKey]}</p>
@@ -167,8 +167,11 @@ export function renderReview(selections) {
   return `
     <section class="card section">
       <div class="section-title">
-        <h2>בדיקה זריזה</h2>
-        <small>אפשר לשנות אם משהו לא יושב</small>
+        <div>
+          <h2 tabindex="-1" data-step-title>בדיקה זריזה</h2>
+          <small>אפשר לשנות אם משהו לא יושב</small>
+        </div>
+        <button type="button" class="link-button" data-action="reset">איפוס בחירות</button>
       </div>
       <div class="review-list">
         <div class="review-item"><span>קרבה</span><strong>${selections.closeness}</strong></div>
@@ -184,7 +187,7 @@ export function renderResult({ amount, recipient, amountWords, quip, dateLabel }
   return `
     <section class="card section">
       <div class="section-title">
-        <h2>הצ'ק מוכן</h2>
+        <h2 tabindex="-1" data-step-title>הצ'ק מוכן</h2>
         <small>זה הסכום שהיינו נותנים</small>
       </div>
       <div class="check-wrap">
@@ -235,9 +238,9 @@ export function renderResult({ amount, recipient, amountWords, quip, dateLabel }
       </div>
       <p class="quip">${quip}</p>
       <div class="result-actions">
-        <button class="button secondary" data-action="randomize">תן עוד אופציה</button>
-        <button class="button primary" data-action="share">לשלוח לחברים</button>
-        <button class="button ghost" data-action="restart">להתחיל מחדש</button>
+        <button class="button secondary" type="button" data-action="randomize">תן עוד אופציה</button>
+        <button class="button primary" type="button" data-action="share">לשלוח לחברים</button>
+        <button class="button ghost" type="button" data-action="restart">להתחיל מחדש</button>
       </div>
     </section>
   `;
@@ -252,8 +255,8 @@ export function renderBar({ label, value, nextLabel, canProceed, showBack }) {
           <span class="value">${value}</span>
         </div>
         <div class="bar-actions">
-          ${showBack ? `<button class="button ghost" data-action="back">חזרה</button>` : ""}
-          <button class="button primary" data-action="next" ${canProceed ? "" : "disabled"}>
+          ${showBack ? `<button class="button ghost" type="button" data-action="back">חזרה</button>` : ""}
+          <button class="button primary" type="button" data-action="next" ${canProceed ? "" : "disabled"} aria-disabled="${canProceed ? "false" : "true"}">
             ${nextLabel}
           </button>
         </div>
@@ -266,7 +269,7 @@ export function renderBackBar() {
   return `
     <div class="bar">
       <div class="bar-inner bar-inner--start">
-        <button class="button ghost" data-action="back">חזרה</button>
+        <button class="button ghost" type="button" data-action="back">חזרה</button>
       </div>
     </div>
   `;

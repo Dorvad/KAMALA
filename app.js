@@ -1,7 +1,6 @@
 import {
   STEP_LABELS,
-  STEP_TITLES,
-  STEP_SUBTITLES,
+  OPTIONS,
   QUIPS,
   SLIDER_FEEDBACK,
   renderHeader,
@@ -19,6 +18,8 @@ import { initStepSliders } from "./slider.js";
 const ANIMATION_TIMINGS = {
   counterMs: 900
 };
+
+const DEBUG = false;
 
 const BASE_AMOUNT = 200;
 const MIN_AMOUNT = 200;
@@ -86,6 +87,8 @@ const state = {
   }
 };
 
+let eventsBound = false;
+
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -146,6 +149,11 @@ function setStep(step, direction = "forward") {
     nextStep = getFirstIncompleteStep();
     direction = "back";
   }
+  if (!STEPS_FLOW.includes(nextStep)) {
+    console.warn("Unknown step, resetting to closeness:", nextStep);
+    nextStep = "closeness";
+    direction = "back";
+  }
   state.ui.transition = direction;
   state.step = nextStep;
   saveState();
@@ -162,10 +170,11 @@ function loadState() {
   try {
     const parsed = JSON.parse(raw);
     if (parsed?.selections) {
-      state.selections = { ...state.selections, ...parsed.selections };
+      state.selections = sanitizeSelections(parsed.selections);
     }
   } catch (error) {
     console.warn("Failed to parse stored state", error);
+    localStorage.removeItem(STORAGE_KEY);
   }
 }
 
@@ -199,10 +208,11 @@ function render() {
 
   if (STEP_LABELS.some((item) => item.key === state.step)) {
     const selected = state.selections[state.step];
+    const preview = getStepPreview(state.step);
     content += `<div class="${screenClass}">${renderStep(state.step, selected)}</div>`;
     content += renderBar({
-      label: "עוד רגע",
-      value: STEP_SUBTITLES[state.step],
+      label: preview.label,
+      value: preview.value,
       nextLabel: "המשך",
       canProceed: Boolean(selected),
       showBack: state.step !== "closeness"
@@ -235,14 +245,20 @@ function render() {
   }
 
   app.innerHTML = content;
-  bindEvents();
+  setupInteractions();
   if (state.step === "result") {
     animateAmount();
   }
+  focusActiveStep();
 }
 
-function bindEvents() {
+function setupInteractions() {
   const app = document.querySelector("#app");
+
+  if (!eventsBound) {
+    app.addEventListener("click", handleAppClick);
+    eventsBound = true;
+  }
 
   initStepSliders({
     root: app,
@@ -257,88 +273,153 @@ function bindEvents() {
       render();
     }
   });
+}
 
-  app.querySelectorAll("[data-action='next']").forEach((button) => {
-    button.addEventListener("click", () => {
-      if (button.disabled) return;
-      if (state.step === "review") {
-        const amount = computeResult(state.selections);
-        state.computed.amount = amount;
-        state.computed.recipient = RECIPIENT_TEXT[state.selections.event];
-        state.computed.amountWords = formatAmountWords(amount);
-        setStep("result", "forward");
-        return;
+// Root cause note: per-render button listeners could be detached during rapid rerenders,
+// especially after slider selection on mobile. Delegated handling keeps one stable listener
+// on #app so "Next" always resolves against the current DOM/state.
+function handleAppClick(event) {
+  const app = document.querySelector("#app");
+  const actionTarget = event.target.closest("[data-action]");
+  if (!actionTarget || !app.contains(actionTarget)) return;
+  if (actionTarget.disabled || actionTarget.getAttribute("aria-disabled") === "true") return;
+
+  const action = actionTarget.dataset.action;
+  if (!action) return;
+
+  if (action === "next") {
+    const selected = state.selections[state.step];
+    const nextStep = state.step === "review" ? "result" : getNextStep(state.step);
+    if (DEBUG) {
+      console.log("NEXT debug", {
+        currentStep: state.step,
+        nextStep,
+        hasSelected: Boolean(selected),
+        disabled: actionTarget.disabled
+      });
+    }
+    if (state.step !== "review" && !selected) return;
+    if (state.step === "review") {
+      const amount = computeResult(state.selections);
+      state.computed.amount = amount;
+      state.computed.recipient = RECIPIENT_TEXT[state.selections.event];
+      state.computed.amountWords = formatAmountWords(amount);
+      setStep("result", "forward");
+      return;
+    }
+    setStep(nextStep, "forward");
+    return;
+  }
+
+  if (action === "back") {
+    const prev = getPreviousStep(state.step);
+    setStep(prev, "back");
+    return;
+  }
+
+  if (action === "start") {
+    setStep("closeness", "forward");
+    return;
+  }
+
+  if (action === "breadcrumb") {
+    const step = actionTarget.dataset.step;
+    if (!step) return;
+    setStep(step, "back");
+    return;
+  }
+
+  if (action === "randomize") {
+    const nextAmount = randomizeAmount(state.computed.amount);
+    state.computed.amount = nextAmount;
+    state.computed.amountWords = formatAmountWords(nextAmount);
+    state.ui.transition = "static";
+    render();
+    return;
+  }
+
+  if (action === "share") {
+    handleShare();
+    return;
+  }
+
+  if (action === "copy-amount") {
+    handleCopyAmount(actionTarget);
+    return;
+  }
+
+  if (action === "restart") {
+    resetSelections();
+    setStep("closeness", "back");
+    return;
+  }
+
+  if (action === "reset") {
+    resetSelections();
+    setStep("closeness", "back");
+  }
+}
+
+function handleCopyAmount(button) {
+  const amount = state.computed.amount;
+  if (!amount) return;
+  if (!button.dataset.originalLabel) {
+    button.dataset.originalLabel = button.textContent || "";
+  }
+  navigator.clipboard.writeText(`₪${amount}`).then(() => {
+    button.textContent = "הועתק!";
+    window.setTimeout(() => {
+      button.textContent = button.dataset.originalLabel || "";
+    }, 1400);
+  }).catch((error) => {
+    console.warn("Copy amount failed", error);
+    prompt("העתיקו את הסכום:", `₪${amount}`);
+  });
+}
+
+function sanitizeSelections(rawSelections) {
+  const nextSelections = { ...state.selections };
+  STEP_LABELS.forEach((step) => {
+    const value = rawSelections?.[step.key];
+    if (typeof value === "string" && OPTIONS[step.key]?.includes(value)) {
+      nextSelections[step.key] = value;
+    } else if (value) {
+      nextSelections[step.key] = "";
+    }
+  });
+  return nextSelections;
+}
+
+function resetSelections() {
+  state.selections = { closeness: "", event: "", location: "", attendees: "" };
+  state.computed = { amount: null, recipient: "", amountWords: "" };
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function getStepPreview(stepKey) {
+  const selected = state.selections[stepKey];
+  if (selected) {
+    return { label: "נבחר", value: selected };
+  }
+  return { label: "הצעד הבא", value: "בחרו אפשרות כדי להמשיך" };
+}
+
+function focusActiveStep() {
+  const app = document.querySelector("#app");
+  window.requestAnimationFrame(() => {
+    let focusTarget = null;
+    if (STEP_LABELS.some((item) => item.key === state.step)) {
+      const stepSection = app.querySelector(`.step-slider[data-step="${state.step}"]`);
+      if (stepSection) {
+        focusTarget = stepSection.querySelector(".reel-card.is-selected") || stepSection.querySelector("[data-step-title]");
       }
-      setStep(getNextStep(state.step), "forward");
-    });
+    } else {
+      focusTarget = app.querySelector("[data-step-title]");
+    }
+    if (focusTarget) {
+      focusTarget.focus({ preventScroll: true });
+    }
   });
-
-  app.querySelectorAll("[data-action='back']").forEach((button) => {
-    button.addEventListener("click", () => {
-      const prev = getPreviousStep(state.step);
-      setStep(prev, "back");
-    });
-  });
-
-  app.querySelectorAll("[data-action='start']").forEach((button) => {
-    button.addEventListener("click", () => {
-      setStep("closeness", "forward");
-    });
-  });
-
-  app.querySelectorAll("[data-action='breadcrumb']").forEach((button) => {
-    if (button.disabled) return;
-    button.addEventListener("click", () => {
-      const step = button.dataset.step;
-      setStep(step, "back");
-    });
-  });
-
-  const randomizeButton = app.querySelector("[data-action='randomize']");
-  if (randomizeButton) {
-    randomizeButton.addEventListener("click", () => {
-      const nextAmount = randomizeAmount(state.computed.amount);
-      state.computed.amount = nextAmount;
-      state.computed.amountWords = formatAmountWords(nextAmount);
-      state.ui.transition = "static";
-      render();
-    });
-  }
-
-  const shareButton = app.querySelector("[data-action='share']");
-  if (shareButton) {
-    shareButton.addEventListener("click", () => {
-      handleShare();
-    });
-  }
-
-  const copyAmountButton = app.querySelector("[data-action='copy-amount']");
-  if (copyAmountButton) {
-    const originalLabel = copyAmountButton.textContent;
-    copyAmountButton.addEventListener("click", async () => {
-      const amount = state.computed.amount;
-      if (!amount) return;
-      try {
-        await navigator.clipboard.writeText(`₪${amount}`);
-        copyAmountButton.textContent = "הועתק!";
-        window.setTimeout(() => {
-          copyAmountButton.textContent = originalLabel;
-        }, 1400);
-      } catch (error) {
-        console.warn("Copy amount failed", error);
-        prompt("העתיקו את הסכום:", `₪${amount}`);
-      }
-    });
-  }
-
-  const restartButton = app.querySelector("[data-action='restart']");
-  if (restartButton) {
-    restartButton.addEventListener("click", () => {
-      state.selections = { closeness: "", event: "", location: "", attendees: "" };
-      state.computed = { amount: null, recipient: "", amountWords: "" };
-      setStep("closeness", "back");
-    });
-  }
 }
 
 function animateAmount() {
