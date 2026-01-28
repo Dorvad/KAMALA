@@ -63,7 +63,7 @@ const RECIPIENT_TEXT = {
 };
 
 const STEPS_FLOW = ["welcome", "closeness", "event", "location", "attendees", "review", "result"];
-const STORAGE_KEY = "kamaslasim-state";
+const STORAGE_KEY = "kamala-state";
 
 const state = {
   step: "welcome",
@@ -346,7 +346,7 @@ function animateAmount() {
 async function handleShare() {
   const recipient = state.computed.recipient;
   const amount = state.computed.amount;
-  const shareText = `KamaLasim אומר/ת: ₪${amount} — ${recipient}`;
+  const shareText = `KAMALA אומר/ת: ₪${amount} — ${recipient}`;
 
   const check = document.querySelector("#check-card");
   if (check && window.html2canvas && navigator.canShare) {
@@ -354,7 +354,7 @@ async function handleShare() {
       const canvas = await window.html2canvas(check, { backgroundColor: null, scale: 2 });
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       if (blob) {
-        const file = new File([blob], "kamaslasim-check.png", { type: "image/png" });
+        const file = new File([blob], "kamala-check.png", { type: "image/png" });
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], text: shareText });
           return;
