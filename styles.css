@@ -339,6 +339,8 @@ body{
 .reel{
   position:relative;
   padding: var(--space-2) 0 var(--space-2);
+  max-width: min(640px, 100%);
+  margin-inline: auto;
 }
 
 .reel-spectrum{
@@ -430,10 +432,18 @@ body{
   cursor: grab;
 }
 
-.reel-nav-button{
+.reel-nav{
   position:absolute;
-  top:50%;
-  transform: translateY(-50%);
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding-inline: 4%;
+  pointer-events:none;
+}
+
+.reel-nav-button{
+  position:relative;
   width:32px;
   height:32px;
   border-radius:50%;
@@ -446,10 +456,27 @@ body{
   justify-content:center;
   cursor:pointer;
   z-index:4;
+  pointer-events:auto;
 }
 
-.reel-nav-prev{ left:8px; }
-.reel-nav-next{ right:8px; }
+.reel-nav-icon{
+  width:18px;
+  height:18px;
+}
+
+.reel-nav-next .reel-nav-icon{
+  transform: scaleX(-1);
+}
+
+:root[dir="rtl"] .reel-nav-next .reel-nav-icon,
+html[dir="rtl"] .reel-nav-next .reel-nav-icon{
+  transform: none;
+}
+
+:root[dir="rtl"] .reel-nav-prev .reel-nav-icon,
+html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
+  transform: scaleX(-1);
+}
 
 .reel-nav-button[disabled]{
   opacity:0.4;
@@ -465,6 +492,12 @@ body{
   padding: var(--space-2) var(--space-2);
   height: clamp(260px, 42vh, 340px);
   touch-action: pan-x;
+}
+
+.reel[data-orientation="vertical"] .reel-nav{
+  flex-direction:column;
+  padding-inline: 0;
+  padding-block: 4%;
 }
 
 .reel-viewport.is-dragging{
@@ -488,7 +521,7 @@ body{
   --scale: 1;
   --desaturate: 0;
   flex: 0 0 auto;
-  width: clamp(190px, 72%, 280px);
+  width: clamp(190px, 70%, 280px);
   border-radius: var(--r-lg);
   padding: var(--space-4) var(--space-3);
   text-align:center;
@@ -502,7 +535,9 @@ body{
   transform: translateZ(0) scale(var(--scale));
   filter: saturate(calc(1 - var(--desaturate)));
   transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) ease, filter var(--dur-2) ease;
-  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .reel[data-orientation="vertical"] .reel-card{
@@ -519,7 +554,7 @@ body{
   position:absolute;
   inset:-20%;
   background: radial-gradient(circle, color-mix(in srgb, var(--surface) 80%, transparent), rgba(255,255,255,0) 60%);
-  opacity:0.08;
+  opacity:0.04;
   pointer-events:none;
   z-index:1;
 }
@@ -532,7 +567,7 @@ body{
   position:absolute;
   inset:0;
   background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%);
-  opacity:.6;
+  opacity:.35;
   pointer-events:none;
   z-index:0;
 }
@@ -556,6 +591,11 @@ body{
 .reel-card-label{
   position:relative;
   z-index:3;
+  display:block;
+  width:100%;
+  text-align:center;
+  direction: rtl;
+  color: var(--text) !important;
 }
 
 .reel-card-check{
@@ -746,6 +786,38 @@ body{
   .reel-card::after{
     transition: none !important;
     animation: none !important;
+  }
+}
+
+@media (max-width: 480px){
+  .reel-nav{
+    padding-inline: 3%;
+  }
+
+  .reel-nav-button{
+    width:28px;
+    height:28px;
+  }
+
+  .reel-nav-icon{
+    width:16px;
+    height:16px;
+  }
+}
+
+@media (min-width: 768px){
+  .reel-nav{
+    padding-inline: 5%;
+  }
+
+  .reel-nav-button{
+    width:36px;
+    height:36px;
+  }
+
+  .reel-nav-icon{
+    width:20px;
+    height:20px;
   }
 }
 
