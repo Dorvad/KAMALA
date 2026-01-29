@@ -36,20 +36,32 @@ export function initStepSliders({
     const dots = Array.from(slider.querySelectorAll(".reel-dot"));
     const shuffleButton = slider.querySelector("[data-action='shuffle']");
     const isVertical = slider.dataset.orientation === "vertical";
+    let navContainer = slider.querySelector(".reel-nav");
     let prevBtn = slider.querySelector(".reel-nav-prev");
     let nextBtn = slider.querySelector(".reel-nav-next");
 
     if (!viewport || !track || cards.length === 0) return;
 
+    if (!navContainer) {
+      navContainer = document.createElement("div");
+      navContainer.className = "reel-nav";
+      slider.appendChild(navContainer);
+    }
     if (!prevBtn) {
       prevBtn = document.createElement("button");
       prevBtn.className = "reel-nav-button reel-nav-prev";
-      slider.appendChild(prevBtn);
+      navContainer.appendChild(prevBtn);
     }
     if (!nextBtn) {
       nextBtn = document.createElement("button");
       nextBtn.className = "reel-nav-button reel-nav-next";
-      slider.appendChild(nextBtn);
+      navContainer.appendChild(nextBtn);
+    }
+    if (prevBtn && prevBtn.parentElement !== navContainer) {
+      navContainer.appendChild(prevBtn);
+    }
+    if (nextBtn && nextBtn.parentElement !== navContainer) {
+      navContainer.appendChild(nextBtn);
     }
     [prevBtn, nextBtn].forEach((button) => {
       if (!button) return;
@@ -57,11 +69,16 @@ export function initStepSliders({
     });
     prevBtn?.setAttribute("aria-label", "הקודם");
     nextBtn?.setAttribute("aria-label", "הבא");
-    if (prevBtn && !prevBtn.innerHTML.trim()) {
-      prevBtn.innerHTML = "&larr;";
+    const arrowIcon = `
+      <svg class="reel-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15.5 5.5L9 12l6.5 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    `;
+    if (prevBtn && !prevBtn.querySelector(".reel-nav-icon")) {
+      prevBtn.innerHTML = arrowIcon;
     }
-    if (nextBtn && !nextBtn.innerHTML.trim()) {
-      nextBtn.innerHTML = "&rarr;";
+    if (nextBtn && !nextBtn.querySelector(".reel-nav-icon")) {
+      nextBtn.innerHTML = arrowIcon;
     }
 
     const values = cards.map((card) => card.dataset.value || "");
@@ -161,11 +178,13 @@ export function initStepSliders({
       }
     }
 
+    function isRTL() {
+      return getComputedStyle(slider).direction === "rtl";
+    }
+
     function navDelta(isNext) {
       if (isVertical) return isNext ? 1 : -1;
-      const dir = getComputedStyle(viewport).direction;
-      const isRtl = dir === "rtl";
-      if (isRtl) {
+      if (isRTL()) {
         return isNext ? -1 : 1;
       }
       return isNext ? 1 : -1;
@@ -286,9 +305,8 @@ export function initStepSliders({
     }
 
     function handleKeydown(event) {
-      const dir = getComputedStyle(viewport).direction;
-      const leftKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
-      const rightKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+      const leftKey = isRTL() ? "ArrowRight" : "ArrowLeft";
+      const rightKey = isRTL() ? "ArrowLeft" : "ArrowRight";
       if (!isVertical && event.key === leftKey) {
         event.preventDefault();
         snapToIndex(currentIndex - 1, false, true);
