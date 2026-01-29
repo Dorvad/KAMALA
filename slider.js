@@ -90,6 +90,7 @@ export function initStepSliders({
     let stepSize = 0;
     let maxOffset = 0;
     let minOffset = 0;
+    let offsets = [];
     let animationFrame = null;
     let isDragging = false;
     let pointerStart = 0;
@@ -100,25 +101,39 @@ export function initStepSliders({
     let wheelTimer = null;
 
     function measure() {
-      const cardRect = cards[0].getBoundingClientRect();
       const viewportRect = viewport.getBoundingClientRect();
-      const trackStyle = getComputedStyle(track);
-      const gap = parseFloat(trackStyle.gap || trackStyle.columnGap || "0");
-      const cardSize = isVertical ? cardRect.height : cardRect.width;
-      const viewportSize = isVertical ? viewportRect.height : viewportRect.width;
-      stepSize = cardSize + gap;
-      centerOffset = (viewportSize - cardSize) / 2;
-      maxOffset = centerOffset;
-      minOffset = centerOffset - (cards.length - 1) * stepSize;
+      const previousTransform = track.style.transform;
+      track.style.transform = "translate3d(0, 0, 0)";
+      offsets = cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = isVertical ? rect.top + rect.height / 2 : rect.left + rect.width / 2;
+        const viewportCenter = isVertical
+          ? viewportRect.top + viewportRect.height / 2
+          : viewportRect.left + viewportRect.width / 2;
+        return viewportCenter - cardCenter;
+      });
+      track.style.transform = previousTransform;
+      if (offsets.length > 1) {
+        stepSize = offsets[1] - offsets[0];
+      } else {
+        stepSize = 0;
+      }
+      centerOffset = offsets[currentIndex] ?? 0;
+      maxOffset = Math.max(...offsets, centerOffset);
+      minOffset = Math.min(...offsets, centerOffset);
       snapToIndex(currentIndex, true);
     }
 
     function offsetForIndex(index) {
-      return clamp(centerOffset - index * stepSize, minOffset, maxOffset);
+      return clamp(offsets[index] ?? centerOffset, minOffset, maxOffset);
     }
 
     function indexForOffset(offset) {
-      return clamp((centerOffset - offset) / stepSize, 0, cards.length - 1);
+      if (cards.length <= 1 || stepSize === 0) {
+        return 0;
+      }
+      const rawIndex = (offset - (offsets[0] ?? 0)) / stepSize;
+      return clamp(rawIndex, 0, cards.length - 1);
     }
 
     function setOffset(offset) {
