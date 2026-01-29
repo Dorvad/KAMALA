@@ -341,6 +341,70 @@ body{
   padding: var(--space-2) 0 var(--space-2);
 }
 
+.reel-spectrum{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: var(--space-2);
+  padding: 0 var(--space-1);
+  margin-bottom: var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.spectrum-track{
+  position:relative;
+  flex:1;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 70%, transparent);
+  overflow:hidden;
+}
+
+.spectrum-fill{
+  position:absolute;
+  inset:0;
+  transform-origin: left center;
+  transform: scaleX(var(--progress, 0));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 80%, #fff 5%), color-mix(in srgb, var(--accent-2) 70%, #fff 5%), color-mix(in srgb, var(--accent-3) 70%, #fff 5%));
+  transition: transform var(--dur-2) var(--ease);
+}
+
+.spectrum-ticks{
+  position:absolute;
+  inset:0;
+  background: repeating-linear-gradient(90deg, transparent, transparent 8%, color-mix(in srgb, var(--surface) 75%, transparent) 8%, color-mix(in srgb, var(--surface) 75%, transparent) 12%);
+  opacity:0.5;
+}
+
+.spectrum-label{
+  min-width: 50px;
+  text-align:center;
+}
+
+.reel[data-orientation="vertical"] .reel-spectrum{
+  flex-direction:column;
+  align-items:center;
+  margin-bottom: var(--space-3);
+}
+
+.reel[data-orientation="vertical"] .spectrum-track{
+  width: 8px;
+  height: 150px;
+  align-self:center;
+}
+
+.reel[data-orientation="vertical"] .spectrum-fill{
+  transform-origin: bottom center;
+  transform: scaleY(var(--progress, 0));
+  background: linear-gradient(0deg, color-mix(in srgb, var(--accent) 80%, #fff 5%), color-mix(in srgb, var(--accent-2) 70%, #fff 5%), color-mix(in srgb, var(--accent-3) 70%, #fff 5%));
+}
+
+.reel[data-orientation="vertical"] .spectrum-ticks{
+  background: repeating-linear-gradient(0deg, transparent, transparent 8%, color-mix(in srgb, var(--surface) 75%, transparent) 8%, color-mix(in srgb, var(--surface) 75%, transparent) 12%);
+}
+
 .reel-spotlight{
   position:absolute;
   inset-inline: 18%;
@@ -352,12 +416,24 @@ body{
   pointer-events:none;
 }
 
+.reel[data-orientation="vertical"] .reel-spotlight{
+  inset-inline: 20%;
+  top: 54px;
+  bottom: 18px;
+}
+
 .reel-viewport{
   position:relative;
   overflow:hidden;
   padding: var(--space-3) 0 var(--space-4);
   touch-action: pan-y;
   cursor: grab;
+}
+
+.reel[data-orientation="vertical"] .reel-viewport{
+  padding: var(--space-2) var(--space-2);
+  height: clamp(260px, 42vh, 340px);
+  touch-action: pan-x;
 }
 
 .reel-viewport.is-dragging{
@@ -369,6 +445,11 @@ body{
   align-items:center;
   gap:var(--space-3);
   will-change: transform;
+}
+
+.reel[data-orientation="vertical"] .reel-track{
+  flex-direction:column;
+  align-items:center;
 }
 
 .reel-card{
@@ -391,6 +472,10 @@ body{
   filter: saturate(calc(1 - var(--desaturate)));
   transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) ease, filter var(--dur-2) ease;
   overflow:hidden;
+}
+
+.reel[data-orientation="vertical"] .reel-card{
+  width: min(80%, 260px);
 }
 
 .reel-card:focus-visible{
@@ -419,6 +504,22 @@ body{
   opacity:.6;
   pointer-events:none;
   z-index:0;
+}
+
+.reel[data-tone="friendship"] .reel-card-glow{
+  background: radial-gradient(circle at top, color-mix(in srgb, #7b7bff 35%, transparent), transparent 65%);
+}
+
+.reel[data-tone="celebration"] .reel-card-glow{
+  background: radial-gradient(circle at top, color-mix(in srgb, #ff9b6a 35%, transparent), transparent 65%);
+}
+
+.reel[data-tone="venue"] .reel-card-glow{
+  background: radial-gradient(circle at top, color-mix(in srgb, #42c8b3 35%, transparent), transparent 65%);
+}
+
+.reel[data-tone="crew"] .reel-card-glow{
+  background: radial-gradient(circle at top, color-mix(in srgb, #f6c177 40%, transparent), transparent 65%);
 }
 
 .reel-card-label{
@@ -470,6 +571,12 @@ body{
   display:flex;
   justify-content:center;
   gap:6px;
+}
+
+.reel[data-orientation="vertical"] .reel-dots{
+  flex-direction:column;
+  align-items:center;
+  margin-top: var(--space-3);
 }
 
 .reel-dot{

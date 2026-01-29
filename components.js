@@ -7,18 +7,41 @@ export const STEP_LABELS = [
 
 export const OPTIONS = {
   closeness: [
-    "קולגה",
-    "חברים הכי טובים",
-    "חברים במידה בינונית",
     "חברים רחוקים",
-    "משפחה קרובה",
-    "משפחה רחוקה",
     "אח של חבר או חברה",
-    "חברים מהצבא"
+    "קולגה",
+    "חברים מהצבא",
+    "חברים במידה בינונית",
+    "משפחה רחוקה",
+    "חברים הכי טובים",
+    "משפחה קרובה"
   ],
-  event: ["חתונה", "ברית/בריתה", "בר/בת מצווה", "חינה"],
-  location: ["אולם או גן אירועים", "מסעדה", "בית כנסת", "בית או חצר"],
+  event: ["ברית/בריתה", "בר/בת מצווה", "חינה", "חתונה"],
+  location: ["בית או חצר", "בית כנסת", "מסעדה", "אולם או גן אירועים"],
   attendees: ["מגיע לבד", "מגיע כזוג", "זוג +1", "יותר מ-3 אנשים"]
+};
+
+const SLIDER_META = {
+  closeness: {
+    orientation: "horizontal",
+    spectrum: ["רחוקים", "הכי קרובים"],
+    tone: "friendship"
+  },
+  event: {
+    orientation: "horizontal",
+    spectrum: ["קליל", "מפואר"],
+    tone: "celebration"
+  },
+  location: {
+    orientation: "vertical",
+    spectrum: ["ביתי", "אולם"],
+    tone: "venue"
+  },
+  attendees: {
+    orientation: "horizontal",
+    spectrum: ["סולו", "חבורה"],
+    tone: "crew"
+  }
 };
 
 export const STEP_TITLES = {
@@ -117,6 +140,7 @@ export function renderWelcome() {
 
 export function renderStep(stepKey, selected) {
   const stepIndex = STEP_LABELS.findIndex((s) => s.key === stepKey);
+  const meta = SLIDER_META[stepKey];
   return `
     <section class="card section step-slider" data-step="${stepKey}">
       <div class="section-title">
@@ -124,7 +148,15 @@ export function renderStep(stepKey, selected) {
         <small>שלב ${stepIndex + 1} מתוך 4</small>
       </div>
       <p class="step-subtitle">${STEP_SUBTITLES[stepKey]}</p>
-      <div class="reel" data-slider data-step="${stepKey}">
+      <div class="reel" data-slider data-step="${stepKey}" data-orientation="${meta.orientation}" data-tone="${meta.tone}">
+        <div class="reel-spectrum" aria-hidden="true">
+          <span class="spectrum-label spectrum-label--start">${meta.spectrum[0]}</span>
+          <div class="spectrum-track">
+            <span class="spectrum-fill"></span>
+            <span class="spectrum-ticks"></span>
+          </div>
+          <span class="spectrum-label spectrum-label--end">${meta.spectrum[1]}</span>
+        </div>
         <div class="reel-spotlight" aria-hidden="true"></div>
         <div class="reel-viewport" role="radiogroup" aria-label="${STEP_TITLES[stepKey]}" tabindex="0">
           <div class="reel-track">
