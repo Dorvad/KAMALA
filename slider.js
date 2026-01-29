@@ -35,6 +35,7 @@ export function initStepSliders({
     const liveNode = slider.querySelector("[data-slider-live]");
     const dots = Array.from(slider.querySelectorAll(".reel-dot"));
     const shuffleButton = slider.querySelector("[data-action='shuffle']");
+    const isVertical = slider.dataset.orientation === "vertical";
 
     if (!viewport || !track || cards.length === 0) return;
 
@@ -49,8 +50,8 @@ export function initStepSliders({
     let minOffset = 0;
     let animationFrame = null;
     let isDragging = false;
-    let pointerStartX = 0;
-    let pointerLastX = 0;
+    let pointerStart = 0;
+    let pointerLast = 0;
     let pointerStartOffset = 0;
     let pointerLastTime = 0;
     let velocity = 0;
@@ -60,9 +61,11 @@ export function initStepSliders({
       const cardRect = cards[0].getBoundingClientRect();
       const viewportRect = viewport.getBoundingClientRect();
       const trackStyle = getComputedStyle(track);
-      const gap = parseFloat(trackStyle.columnGap || trackStyle.gap || "0");
-      stepSize = cardRect.width + gap;
-      centerOffset = (viewportRect.width - cardRect.width) / 2;
+      const gap = parseFloat(trackStyle.gap || trackStyle.columnGap || "0");
+      const cardSize = isVertical ? cardRect.height : cardRect.width;
+      const viewportSize = isVertical ? viewportRect.height : viewportRect.width;
+      stepSize = cardSize + gap;
+      centerOffset = (viewportSize - cardSize) / 2;
       maxOffset = centerOffset;
       minOffset = centerOffset - (cards.length - 1) * stepSize;
       snapToIndex(currentIndex, true);
@@ -85,7 +88,9 @@ export function initStepSliders({
       if (animationFrame) return;
       animationFrame = requestAnimationFrame(() => {
         animationFrame = null;
-        track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+        track.style.transform = isVertical
+          ? `translate3d(0, ${currentOffset}px, 0)`
+          : `translate3d(${currentOffset}px, 0, 0)`;
         updateVisuals();
       });
     }
@@ -105,6 +110,11 @@ export function initStepSliders({
         dots.forEach((dot, dotIndex) => {
           dot.classList.toggle("is-active", dotIndex === nearest);
         });
+      }
+      const spectrumFill = slider.querySelector(".spectrum-fill");
+      if (spectrumFill) {
+        const progress = cards.length > 1 ? nearest / (cards.length - 1) : 0;
+        spectrumFill.style.setProperty("--progress", progress.toFixed(3));
       }
       if (feedbackMessages?.length && quipNode) {
         const messageIndex = nearest % feedbackMessages.length;
@@ -147,7 +157,9 @@ export function initStepSliders({
       const targetOffset = offsetForIndex(index);
       if (immediate || reducedMotion) {
         currentOffset = targetOffset;
-        track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+        track.style.transform = isVertical
+          ? `translate3d(0, ${currentOffset}px, 0)`
+          : `translate3d(${currentOffset}px, 0, 0)`;
         updateSelection(index, announce);
         updateVisuals();
         if (announce) {
@@ -165,7 +177,9 @@ export function initStepSliders({
         const progress = clamp((now - startTime) / duration, 0, 1);
         const eased = ease(progress);
         currentOffset = startOffset + (targetOffset - startOffset) * eased;
-        track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+        track.style.transform = isVertical
+          ? `translate3d(0, ${currentOffset}px, 0)`
+          : `translate3d(${currentOffset}px, 0, 0)`;
         updateVisuals();
         if (progress < 1) {
           requestAnimationFrame(animate);
@@ -184,8 +198,8 @@ export function initStepSliders({
     function handlePointerDown(event) {
       if (event.pointerType === "mouse" && event.button !== 0) return;
       isDragging = true;
-      pointerStartX = event.clientX;
-      pointerLastX = event.clientX;
+      pointerStart = isVertical ? event.clientY : event.clientX;
+      pointerLast = pointerStart;
       pointerStartOffset = currentOffset;
       pointerLastTime = performance.now();
       velocity = 0;
@@ -197,12 +211,13 @@ export function initStepSliders({
       if (!isDragging) return;
       event.preventDefault();
       const now = performance.now();
-      const deltaX = event.clientX - pointerStartX;
+      const position = isVertical ? event.clientY : event.clientX;
+      const delta = position - pointerStart;
       const deltaTime = now - pointerLastTime || 1;
-      velocity = (event.clientX - pointerLastX) / deltaTime;
-      pointerLastX = event.clientX;
+      velocity = (position - pointerLast) / deltaTime;
+      pointerLast = position;
       pointerLastTime = now;
-      setOffset(pointerStartOffset + deltaX);
+      setOffset(pointerStartOffset + delta);
     }
 
     function handlePointerUp(event) {
@@ -217,7 +232,7 @@ export function initStepSliders({
 
     function handleWheel(event) {
       event.preventDefault();
-      const delta = event.deltaY || event.deltaX || 0;
+      const delta = isVertical ? (event.deltaY || event.deltaX || 0) : (event.deltaX || event.deltaY || 0);
       setOffset(currentOffset - delta);
       window.clearTimeout(wheelTimer);
       wheelTimer = window.setTimeout(() => {
@@ -230,13 +245,18 @@ export function initStepSliders({
       const dir = getComputedStyle(viewport).direction;
       const leftKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
       const rightKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-      if (event.key === leftKey) {
+      if (!isVertical && event.key === leftKey) {
         event.preventDefault();
         snapToIndex(currentIndex - 1, false, true);
       }
-      if (event.key === rightKey) {
+      if (!isVertical && event.key === rightKey) {
         event.preventDefault();
         snapToIndex(currentIndex + 1, false, true);
+      }
+      if (isVertical && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+        event.preventDefault();
+        const delta = event.key === "ArrowUp" ? -1 : 1;
+        snapToIndex(currentIndex + delta, false, true);
       }
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -259,7 +279,9 @@ export function initStepSliders({
         const progress = clamp((now - startTime) / duration, 0, 1);
         const eased = easeOutCubic(progress);
         currentOffset = startOffset + (targetOffset - startOffset) * eased;
-        track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+        track.style.transform = isVertical
+          ? `translate3d(0, ${currentOffset}px, 0)`
+          : `translate3d(${currentOffset}px, 0, 0)`;
         updateVisuals();
         if (progress < 1) {
           requestAnimationFrame(animate);
