@@ -36,8 +36,33 @@ export function initStepSliders({
     const dots = Array.from(slider.querySelectorAll(".reel-dot"));
     const shuffleButton = slider.querySelector("[data-action='shuffle']");
     const isVertical = slider.dataset.orientation === "vertical";
+    let prevBtn = slider.querySelector(".reel-nav-prev");
+    let nextBtn = slider.querySelector(".reel-nav-next");
 
     if (!viewport || !track || cards.length === 0) return;
+
+    if (!prevBtn) {
+      prevBtn = document.createElement("button");
+      prevBtn.className = "reel-nav-button reel-nav-prev";
+      slider.appendChild(prevBtn);
+    }
+    if (!nextBtn) {
+      nextBtn = document.createElement("button");
+      nextBtn.className = "reel-nav-button reel-nav-next";
+      slider.appendChild(nextBtn);
+    }
+    [prevBtn, nextBtn].forEach((button) => {
+      if (!button) return;
+      button.type = "button";
+    });
+    prevBtn?.setAttribute("aria-label", "הקודם");
+    nextBtn?.setAttribute("aria-label", "הבא");
+    if (prevBtn && !prevBtn.innerHTML.trim()) {
+      prevBtn.innerHTML = "&larr;";
+    }
+    if (nextBtn && !nextBtn.innerHTML.trim()) {
+      nextBtn.innerHTML = "&rarr;";
+    }
 
     const values = cards.map((card) => card.dataset.value || "");
     const initialSelection = selections[stepKey];
@@ -130,9 +155,28 @@ export function initStepSliders({
         card.setAttribute("aria-checked", isSelected ? "true" : "false");
         card.setAttribute("tabindex", index === currentIndex ? "0" : "-1");
       });
+      updateNavButtons();
       if (announce && hasSelection && liveNode) {
         liveNode.textContent = `נבחר: ${values[currentIndex]}`;
       }
+    }
+
+    function navDelta(isNext) {
+      if (isVertical) return isNext ? 1 : -1;
+      const dir = getComputedStyle(viewport).direction;
+      const isRtl = dir === "rtl";
+      if (isRtl) {
+        return isNext ? -1 : 1;
+      }
+      return isNext ? 1 : -1;
+    }
+
+    function updateNavButtons() {
+      if (!prevBtn || !nextBtn) return;
+      const prevTarget = currentIndex + navDelta(false);
+      const nextTarget = currentIndex + navDelta(true);
+      prevBtn.disabled = prevTarget < 0 || prevTarget > cards.length - 1;
+      nextBtn.disabled = nextTarget < 0 || nextTarget > cards.length - 1;
     }
 
     function triggerSpark() {
@@ -302,6 +346,18 @@ export function initStepSliders({
         snapToIndex(index, false, true);
       });
     });
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        snapToIndex(currentIndex + navDelta(false), false, true);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        snapToIndex(currentIndex + navDelta(true), false, true);
+      });
+    }
 
     viewport.addEventListener("pointerdown", handlePointerDown);
     viewport.addEventListener("pointermove", handlePointerMove, { passive: false });

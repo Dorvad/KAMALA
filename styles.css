@@ -430,6 +430,37 @@ body{
   cursor: grab;
 }
 
+.reel-nav-button{
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:4;
+}
+
+.reel-nav-prev{ left:8px; }
+.reel-nav-next{ right:8px; }
+
+.reel-nav-button[disabled]{
+  opacity:0.4;
+  pointer-events:none;
+}
+
+.reel-nav-button:focus-visible{
+  outline:none;
+  box-shadow: var(--ring);
+}
+
 .reel[data-orientation="vertical"] .reel-viewport{
   padding: var(--space-2) var(--space-2);
   height: clamp(260px, 42vh, 340px);
@@ -463,7 +494,7 @@ body{
   text-align:center;
   font-weight:800;
   font-size: 15px;
-  color: var(--text);
+  color: var(--text) !important;
   border:1px solid var(--border);
   background: linear-gradient(150deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--accent) 6%, var(--surface)));
   box-shadow: var(--shadow-2);
@@ -488,7 +519,7 @@ body{
   position:absolute;
   inset:-20%;
   background: radial-gradient(circle, color-mix(in srgb, var(--surface) 80%, transparent), rgba(255,255,255,0) 60%);
-  opacity:0;
+  opacity:0.08;
   pointer-events:none;
   z-index:1;
 }
@@ -524,7 +555,7 @@ body{
 
 .reel-card-label{
   position:relative;
-  z-index:2;
+  z-index:3;
 }
 
 .reel-card-check{
@@ -604,7 +635,7 @@ body{
 
 @keyframes reelSpark{
   0%{ opacity:0; transform: scale(.8); }
-  60%{ opacity:.8; }
+  60%{ opacity:.35; }
   100%{ opacity:0; transform: scale(1.15); }
 }
 
