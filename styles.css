@@ -426,10 +426,18 @@ body{
 
 .reel-viewport{
   position:relative;
-  overflow:hidden;
+  overflow-x:auto;
+  overflow-y:hidden;
   padding: var(--space-3) 0 var(--space-4);
-  touch-action: pan-y;
+  touch-action: pan-x;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
   cursor: grab;
+}
+
+.reel-viewport::-webkit-scrollbar{
+  display:none;
 }
 
 .reel-nav{
@@ -491,7 +499,10 @@ html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
 .reel[data-orientation="vertical"] .reel-viewport{
   padding: var(--space-2) var(--space-2);
   height: clamp(260px, 42vh, 340px);
-  touch-action: pan-x;
+  overflow-y:auto;
+  overflow-x:hidden;
+  touch-action: pan-y;
+  scroll-snap-type: y mandatory;
 }
 
 .reel[data-orientation="vertical"] .reel-nav{
@@ -509,11 +520,14 @@ html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
   align-items:center;
   gap:var(--space-3);
   will-change: transform;
+  padding-inline: 16%;
 }
 
 .reel[data-orientation="vertical"] .reel-track{
   flex-direction:column;
   align-items:center;
+  padding-inline: 0;
+  padding-block: 12%;
 }
 
 .reel-card{
@@ -522,6 +536,7 @@ html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
   --desaturate: 0;
   flex: 0 0 auto;
   width: clamp(190px, 70%, 280px);
+  scroll-snap-align: center;
   border-radius: var(--r-lg);
   padding: var(--space-4) var(--space-3);
   text-align:center;
