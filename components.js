@@ -178,18 +178,6 @@ export function renderStep(stepKey, selected) {
             `).join("")}
           </div>
         </div>
-        <div class="reel-nav">
-          <button type="button" class="reel-nav-button reel-nav-prev" aria-label="הקודם">
-            <svg class="reel-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M15.5 5.5L9 12l6.5 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-            </svg>
-          </button>
-          <button type="button" class="reel-nav-button reel-nav-next" aria-label="הבא">
-            <svg class="reel-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M15.5 5.5L9 12l6.5 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-            </svg>
-          </button>
-        </div>
         <div class="reel-feedback">
           <span class="reel-quip" data-slider-quip>בחרו תנועה והשאר יסתדר</span>
         </div>

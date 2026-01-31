@@ -431,69 +431,15 @@ body{
   padding: var(--space-3) 0 var(--space-4);
   touch-action: pan-x;
   scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   cursor: grab;
 }
 
 .reel-viewport::-webkit-scrollbar{
   display:none;
-}
-
-.reel-nav{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding-inline: 4%;
-  pointer-events:none;
-}
-
-.reel-nav-button{
-  position:relative;
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow-1);
-  border:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:4;
-  pointer-events:auto;
-}
-
-.reel-nav-icon{
-  width:18px;
-  height:18px;
-}
-
-.reel-nav-next .reel-nav-icon{
-  transform: scaleX(-1);
-}
-
-:root[dir="rtl"] .reel-nav-next .reel-nav-icon,
-html[dir="rtl"] .reel-nav-next .reel-nav-icon{
-  transform: none;
-}
-
-:root[dir="rtl"] .reel-nav-prev .reel-nav-icon,
-html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
-  transform: scaleX(-1);
-}
-
-.reel-nav-button[disabled]{
-  opacity:0.4;
-  pointer-events:none;
-}
-
-.reel-nav-button:focus-visible{
-  outline:none;
-  box-shadow: var(--ring);
 }
 
 .reel[data-orientation="vertical"] .reel-viewport{
@@ -503,12 +449,7 @@ html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
   overflow-x:hidden;
   touch-action: pan-y;
   scroll-snap-type: y mandatory;
-}
-
-.reel[data-orientation="vertical"] .reel-nav{
-  flex-direction:column;
-  padding-inline: 0;
-  padding-block: 4%;
+  scroll-snap-stop: always;
 }
 
 .reel-viewport.is-dragging{
@@ -804,37 +745,6 @@ html[dir="rtl"] .reel-nav-prev .reel-nav-icon{
   }
 }
 
-@media (max-width: 480px){
-  .reel-nav{
-    padding-inline: 3%;
-  }
-
-  .reel-nav-button{
-    width:28px;
-    height:28px;
-  }
-
-  .reel-nav-icon{
-    width:16px;
-    height:16px;
-  }
-}
-
-@media (min-width: 768px){
-  .reel-nav{
-    padding-inline: 5%;
-  }
-
-  .reel-nav-button{
-    width:36px;
-    height:36px;
-  }
-
-  .reel-nav-icon{
-    width:20px;
-    height:20px;
-  }
-}
 
 @keyframes selectPulse{
   0%{ transform: scale(.98); }

@@ -41,8 +41,6 @@ export function initStepSliders({
     const liveNode = slider.querySelector("[data-slider-live]");
     const dots = Array.from(slider.querySelectorAll(".reel-dot"));
     const shuffleButton = slider.querySelector("[data-action='shuffle']");
-    const prevBtn = slider.querySelector(".reel-nav-prev");
-    const nextBtn = slider.querySelector(".reel-nav-next");
     const isVertical = slider.dataset.orientation === "vertical";
 
     if (!viewport || cards.length === 0) return;
@@ -55,23 +53,15 @@ export function initStepSliders({
     let scrollTimer = null;
     let programmaticScroll = false;
     let programmaticCommit = false;
+    let isPointerDown = false;
+    let dragStartPosition = 0;
+    let dragStartScroll = 0;
+    let dragMoved = false;
+    let suppressClickUntil = 0;
+    let activePointerId = null;
 
     function isRTL() {
       return getComputedStyle(slider).direction === "rtl";
-    }
-
-    function navDelta(isNext) {
-      if (isVertical) return isNext ? 1 : -1;
-      if (isRTL()) return isNext ? -1 : 1;
-      return isNext ? 1 : -1;
-    }
-
-    function updateNavButtons() {
-      if (!prevBtn || !nextBtn) return;
-      const prevTarget = currentIndex + navDelta(false);
-      const nextTarget = currentIndex + navDelta(true);
-      prevBtn.disabled = prevTarget < 0 || prevTarget > cards.length - 1;
-      nextBtn.disabled = nextTarget < 0 || nextTarget > cards.length - 1;
     }
 
     function updateIndicators(nearestIndex) {
@@ -140,7 +130,6 @@ export function initStepSliders({
         card.setAttribute("aria-checked", isSelected ? "true" : "false");
         card.setAttribute("tabindex", index === currentIndex ? "0" : "-1");
       });
-      updateNavButtons();
       if (announce && hasSelection && liveNode) {
         liveNode.textContent = `נבחר: ${values[currentIndex]}`;
       }
@@ -230,6 +219,49 @@ export function initStepSliders({
       }
     }
 
+    function getPointerPosition(event) {
+      return isVertical ? event.clientY : event.clientX;
+    }
+
+    function handlePointerDown(event) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      isPointerDown = true;
+      dragMoved = false;
+      activePointerId = event.pointerId;
+      dragStartPosition = getPointerPosition(event);
+      dragStartScroll = getScrollPosition(viewport, isVertical);
+      viewport.setPointerCapture(activePointerId);
+      if (event.pointerType === "mouse") {
+        viewport.classList.add("is-dragging");
+      }
+    }
+
+    function handlePointerMove(event) {
+      if (!isPointerDown || event.pointerId !== activePointerId) return;
+      const delta = dragStartPosition - getPointerPosition(event);
+      if (Math.abs(delta) > 6) {
+        dragMoved = true;
+      }
+      if (dragMoved) {
+        setScrollPosition(viewport, isVertical, dragStartScroll + delta, "auto");
+      }
+    }
+
+    function endPointerDrag() {
+      if (!isPointerDown) return;
+      if (activePointerId !== null) {
+        viewport.releasePointerCapture(activePointerId);
+      }
+      if (dragMoved) {
+        suppressClickUntil = Date.now() + 250;
+        settleSelection(true);
+      }
+      viewport.classList.remove("is-dragging");
+      isPointerDown = false;
+      dragMoved = false;
+      activePointerId = null;
+    }
+
     function shuffle() {
       if (cards.length <= 1) return;
       let nextIndex = Math.floor(Math.random() * cards.length);
@@ -241,20 +273,17 @@ export function initStepSliders({
 
     cards.forEach((card, index) => {
       card.addEventListener("click", () => {
+        if (Date.now() < suppressClickUntil) return;
         scrollToIndex(index, true);
       });
     });
 
-    prevBtn?.addEventListener("click", () => {
-      scrollToIndex(currentIndex + navDelta(false), true);
-    });
-
-    nextBtn?.addEventListener("click", () => {
-      scrollToIndex(currentIndex + navDelta(true), true);
-    });
-
     viewport.addEventListener("scroll", handleScroll, { passive: true });
     viewport.addEventListener("keydown", handleKeydown);
+    viewport.addEventListener("pointerdown", handlePointerDown);
+    viewport.addEventListener("pointermove", handlePointerMove);
+    viewport.addEventListener("pointerup", endPointerDrag);
+    viewport.addEventListener("pointercancel", endPointerDrag);
 
     shuffleButton?.addEventListener("click", shuffle);
 
