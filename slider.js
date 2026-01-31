@@ -4,16 +4,60 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function getScrollPosition(viewport, isVertical) {
-  return isVertical ? viewport.scrollTop : viewport.scrollLeft;
+let rtlScrollType = null;
+
+function getRtlScrollType() {
+  if (rtlScrollType) return rtlScrollType;
+  const probe = document.createElement("div");
+  probe.dir = "rtl";
+  probe.style.width = "120px";
+  probe.style.height = "120px";
+  probe.style.overflow = "scroll";
+  probe.style.position = "absolute";
+  probe.style.top = "-9999px";
+  probe.innerHTML = "<div style='width:200px;height:1px;'></div>";
+  document.body.appendChild(probe);
+  if (probe.scrollLeft > 0) {
+    rtlScrollType = "default";
+  } else {
+    probe.scrollLeft = 1;
+    rtlScrollType = probe.scrollLeft === 0 ? "negative" : "reverse";
+  }
+  document.body.removeChild(probe);
+  return rtlScrollType;
 }
 
-function setScrollPosition(viewport, isVertical, value, behavior) {
-  viewport.scrollTo({
-    left: isVertical ? 0 : value,
-    top: isVertical ? value : 0,
-    behavior
-  });
+function getScrollPosition(viewport, isVertical, isRtl) {
+  if (isVertical) return viewport.scrollTop;
+  if (!isRtl) return viewport.scrollLeft;
+  const type = getRtlScrollType();
+  if (type === "negative") {
+    return -viewport.scrollLeft;
+  }
+  if (type === "reverse") {
+    return viewport.scrollWidth - viewport.clientWidth - viewport.scrollLeft;
+  }
+  return viewport.scrollLeft;
+}
+
+function setScrollPosition(viewport, isVertical, value, behavior, isRtl) {
+  let left = 0;
+  let top = 0;
+  if (isVertical) {
+    top = value;
+  } else if (!isRtl) {
+    left = value;
+  } else {
+    const type = getRtlScrollType();
+    if (type === "negative") {
+      left = -value;
+    } else if (type === "reverse") {
+      left = viewport.scrollWidth - viewport.clientWidth - value;
+    } else {
+      left = value;
+    }
+  }
+  viewport.scrollTo({ left, top, behavior });
 }
 
 function getViewportSize(viewport, isVertical) {
@@ -85,7 +129,7 @@ export function initStepSliders({
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        const scrollPos = getScrollPosition(viewport, isVertical);
+        const scrollPos = getScrollPosition(viewport, isVertical, isRTL());
         const viewportCenter = scrollPos + getViewportSize(viewport, isVertical) / 2;
         let closestIndex = 0;
         let closestDistance = Number.POSITIVE_INFINITY;
@@ -109,7 +153,7 @@ export function initStepSliders({
     }
 
     function findClosestIndex() {
-      const scrollPos = getScrollPosition(viewport, isVertical);
+      const scrollPos = getScrollPosition(viewport, isVertical, isRTL());
       const viewportCenter = scrollPos + getViewportSize(viewport, isVertical) / 2;
       let closestIndex = 0;
       let closestDistance = Number.POSITIVE_INFINITY;
@@ -173,7 +217,7 @@ export function initStepSliders({
       const behavior = immediate || reducedMotion ? "auto" : "smooth";
       programmaticScroll = true;
       programmaticCommit = announce;
-      setScrollPosition(viewport, isVertical, targetScroll, behavior);
+      setScrollPosition(viewport, isVertical, targetScroll, behavior, isRTL());
       if (behavior === "auto") {
         applyIndex(index, { announce, commit: announce });
         programmaticScroll = false;
@@ -229,7 +273,7 @@ export function initStepSliders({
       dragMoved = false;
       activePointerId = event.pointerId;
       dragStartPosition = getPointerPosition(event);
-      dragStartScroll = getScrollPosition(viewport, isVertical);
+      dragStartScroll = getScrollPosition(viewport, isVertical, isRTL());
       viewport.setPointerCapture(activePointerId);
       if (event.pointerType === "mouse") {
         viewport.classList.add("is-dragging");
@@ -243,7 +287,7 @@ export function initStepSliders({
         dragMoved = true;
       }
       if (dragMoved) {
-        setScrollPosition(viewport, isVertical, dragStartScroll + delta, "auto");
+        setScrollPosition(viewport, isVertical, dragStartScroll + delta, "auto", isRTL());
       }
     }
 
